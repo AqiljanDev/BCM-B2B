@@ -17,8 +17,13 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.compose_multiplatform
+import kz.bcm.b2b.di.dataModule
+import kz.bcm.b2b.di.domainModule
+import kz.bcm.b2b.di.viewModelModule
 import kz.bcm.b2b.presentation.other.theme.MyTheme
 import kz.bcm.b2b.presentation.ui.main.MainScreen
+import org.koin.compose.KoinApplication
+import org.koin.compose.KoinContext
 
 @Composable
 @Preview
