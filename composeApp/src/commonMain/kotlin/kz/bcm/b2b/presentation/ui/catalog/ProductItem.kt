@@ -1,0 +1,375 @@
+package kz.bcm.b2b.presentation.ui.catalog
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Add
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import org.jetbrains.compose.resources.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import bcm_b2b.composeapp.generated.resources.Res
+import bcm_b2b.composeapp.generated.resources.ic_camera_off
+import bcm_b2b.composeapp.generated.resources.ic_cart
+import bcm_b2b.composeapp.generated.resources.ic_compare
+import bcm_b2b.composeapp.generated.resources.ic_favorite
+import bcm_b2b.composeapp.generated.resources.ic_favorite_filled
+import bcm_b2b.composeapp.generated.resources.ic_minus
+import bcm_b2b.composeapp.generated.resources.inter
+import bcm_b2b.composeapp.generated.resources.inter_light
+import bcm_b2b.composeapp.generated.resources.inter_medium
+import bcm_b2b.composeapp.generated.resources.inter_regular
+import bcm_b2b.composeapp.generated.resources.oswald_medium
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kz.bcm.b2b.data.dto.cart.event.PostCartDto
+import kz.bcm.b2b.domain.data.cart.event.PostCart
+import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
+import kz.bcm.b2b.domain.data.findOne.CharactersToProducts
+import kz.bcm.b2b.domain.data.findOne.Product
+import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
+import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
+import kz.bcm.b2b.presentation.other.theme.Url
+import org.jetbrains.compose.resources.painterResource
+
+@Composable
+fun ProductItem(
+    product: Product,
+    compareList: List<GetMini>,
+    favoriteList: List<GetMini>,
+    cartList: List<kz.bcm.b2b.domain.data.cart.mini.Product>,
+    clickFavorite: (prodId: String) -> Unit,
+    clickCompare: (prodId: String) -> Unit,
+    clickCart: (item: PostCart, id: Int) -> Unit
+) {
+    val src = Url.SRC_IMAGE + product.gallery.firstOrNull()?.photo
+
+    var stateCompare by remember {
+        mutableStateOf(
+            compareList.any { it.prodId == product.id1c }
+        )
+    }
+
+    var stateFavorite by remember {
+        mutableStateOf(
+            favoriteList.any { it.prodId == product.id1c }
+        )
+    }
+
+    var stateCart by remember {
+        mutableStateOf(
+            cartList.find { it.prodId == product.id1c }?.count ?: 0
+        )
+    }
+
+    LaunchedEffect(compareList) {
+        stateCompare = compareList.any { it.prodId == product.id1c }
+    }
+
+    LaunchedEffect(favoriteList) {
+        stateFavorite = favoriteList.any { it.prodId == product.id1c }
+    }
+
+    println("Image: $src")
+
+    val painter = asyncPainterResource(src)
+
+    Row(
+        modifier = Modifier.fillMaxWidth().height(200.dp)
+            .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(15.dp)
+    ) {
+
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            if (product.gallery.isNotEmpty()) {
+                KamelImage(
+                    resource = painter,
+                    contentDescription = "Photo",
+                    modifier = Modifier.size(100.dp)
+                        .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                )
+            } else {
+                Image(
+                    painter = painterResource(Res.drawable.ic_camera_off),
+                    contentDescription = null,
+                    modifier = Modifier.size(100.dp)
+                        .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                        .alpha(0.5f)
+                )
+            }
+            Row(
+                modifier = Modifier.padding(bottom = 9.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(
+                        if (stateFavorite) Res.drawable.ic_favorite_filled else Res.drawable.ic_favorite
+                    ),
+                    contentDescription = null,
+                    tint = ColorMainGreen,
+                    modifier = Modifier.size(27.dp).clickable(
+                        indication = null,
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        }
+                    ) {
+                        clickFavorite(product.id1c)
+                    }
+                )
+
+                Icon(
+                    painter = painterResource(Res.drawable.ic_compare),
+                    contentDescription = null,
+                    tint = if (stateCompare) Color.White else ColorMainGreen,
+                    modifier = Modifier
+                        .size(27.dp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(
+                            if (stateCompare) ColorMainGreen else Color.White
+                        )
+                        .padding(5.dp)
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember {
+                                MutableInteractionSource()
+                            }
+                        ) {
+                            clickCompare(product.id1c)
+                        }
+                )
+            }
+        }
+
+
+        Column(
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = product.title,
+                    fontSize = 13.sp,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    fontFamily = FontFamily(Font(Res.font.inter_medium))
+                )
+
+                Text(
+                    text = "Арт: ${product.article}",
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily(Font(Res.font.inter_regular)),
+                    color = Color.LightGray
+                )
+
+                CharacterList(product.charactersToProducts)
+            }
+
+            Spacer(Modifier.height(5.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "${product.price} ₸",
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(Res.font.oswald_medium))
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+                if (stateCart <= 0) {
+
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(color = ColorMainGreen)
+                            .padding(horizontal = 12.dp, vertical = 9.dp)
+                            .clickable {
+                                stateCart = 1
+
+                                clickCart(
+                                    PostCartDto(product.id1c, stateCart),
+                                    getIdFromCartMini(cartList, product.id1c)
+                                )
+                            },
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_cart),
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+
+                        Text(
+                            "В корзину",
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(Res.font.inter_regular)),
+                            color = Color.White
+                        )
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier.widthIn(min = 100.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        Text(
+                            "Наличие: ${product.count} шт",
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(Res.font.inter_regular)),
+                            color = Color.Gray
+                        )
+
+                        Row(
+                            modifier = Modifier.widthIn(min = 100.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_minus),
+                                contentDescription = "minus",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .size(27.dp)
+                                    .clip(RoundedCornerShape(3.dp))
+                                    .background(color = ColorMainGreen)
+                                    .padding(6.dp).clickable(
+                                        indication = null,
+                                        interactionSource = remember {
+                                            MutableInteractionSource()
+                                        }
+                                    ) {
+                                        stateCart--
+
+                                        clickCart(
+                                            PostCartDto(
+                                                prodId = product.id1c,
+                                                stateCart
+                                            ),
+                                            getIdFromCartMini(cartList, product.id1c)
+                                        )
+
+                                    }
+                            )
+
+                            Text(
+                                text = stateCart.toString(),
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily(Font(Res.font.oswald_medium))
+                            )
+
+                            Icon(
+                                imageVector = Icons.Sharp.Add,
+                                contentDescription = "plus",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .size(27.dp)
+                                    .clip(RoundedCornerShape(3.dp))
+                                    .background(color = ColorMainGreen)
+                                    .padding(6.dp)
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = remember {
+                                            MutableInteractionSource()
+                                        }
+                                    ) {
+                                        if (stateCart < product.count) {
+                                            stateCart++
+
+                                            clickCart(
+                                                PostCartDto(
+                                                    prodId = product.id1c,
+                                                    stateCart
+                                                ),
+                                                getIdFromCartMini(cartList, product.id1c)
+                                            )
+                                        }
+                                    }
+                            )
+                        }
+                    }
+                }
+            }
+
+
+        }
+    }
+}
+
+
+@Composable
+fun CharacterList(list: List<CharactersToProducts>, takeCount: Int = 3) {
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        items(list.take(takeCount)) { char ->
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "·", fontSize = 12.sp, fontFamily = FontFamily(Font(Res.font.inter)))
+                Text(
+                    text = "${char.character.title}:",
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(Res.font.inter_light))
+                )
+                Text(
+                    text = char.characterValue.title,
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(Res.font.inter_regular))
+                )
+            }
+        }
+    }
+}
+
+private fun getIdFromCartMini(cartMini: List<kz.bcm.b2b.domain.data.cart.mini.Product>, prodId: String): Int {
+    return cartMini.find { it.prodId == prodId }?.id ?: 0
+}

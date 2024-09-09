@@ -29,6 +29,7 @@ import bcm_b2b.composeapp.generated.resources.ic_menu_burger
 import bcm_b2b.composeapp.generated.resources.ic_search
 import kotlinx.coroutines.launch
 import kz.bcm.b2b.presentation.other.data.UiState
+import kz.bcm.b2b.presentation.ui.catalog.CatalogScreen
 import kz.bcm.b2b.presentation.viewmodel.CatalogViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -96,18 +97,7 @@ fun MainScreen() {
 
             when (selectedItem.value) {
                 0 -> {
-                    val viewModel: CatalogViewModel = koinInject()
-                    val stateCatalog = viewModel.catalog.collectAsState()
-
-                    LaunchedEffect(Unit) {
-                        viewModel.getFindOne(category = "index", page = 1)
-                    }
-
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-
-                        println("Catalog: ${stateCatalog.value?.info?.title}")
-                    }
-                    println("Screen item #${selectedItem.value + 1}")
+                    CatalogScreen()
                 }
 
                 1 -> {

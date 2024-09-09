@@ -8,7 +8,7 @@ import kz.bcm.b2b.domain.data.findOne.Catalog
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
 
 class CatalogDataSourceImpl(
-//    private val httpClient: HttpClient
+    private val httpClient: HttpClient
 ) : CatalogDataSource {
 
 
@@ -30,7 +30,7 @@ class CatalogDataSourceImpl(
             if (f.isNotEmpty()) append("&f=$f")
         }
 
-        val response: CatalogDto = CatalogDto()
+        val response: CatalogDto = httpClient.get(url).body()
 
         return response
     }

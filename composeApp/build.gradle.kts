@@ -61,6 +61,8 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.composeVM)
+
+            implementation(libs.media.kamel.image)
         }
 
         desktopMain.dependencies {

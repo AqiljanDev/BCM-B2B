@@ -7,6 +7,11 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     single {
-        CatalogViewModel( get() )
+        CatalogViewModel(
+            get(), get(),
+            get(), get(),
+            get(), get(),
+            get(), get()
+        )
     }
 }
