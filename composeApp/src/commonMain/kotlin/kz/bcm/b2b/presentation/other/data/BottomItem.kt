@@ -4,5 +4,6 @@ import org.jetbrains.compose.resources.DrawableResource
 
 data class BottomItem(
     val title: String,
-    val img: DrawableResource
+    val img: DrawableResource,
+    val route: String
 )

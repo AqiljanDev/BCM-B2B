@@ -9,11 +9,14 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.ic_cart
 import bcm_b2b.composeapp.generated.resources.ic_catalog
@@ -21,6 +24,7 @@ import bcm_b2b.composeapp.generated.resources.ic_compare
 import bcm_b2b.composeapp.generated.resources.ic_favorite
 import bcm_b2b.composeapp.generated.resources.ic_profile
 import kz.bcm.b2b.presentation.other.data.BottomItem
+import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.other.theme.ColorMainOrange
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -29,15 +33,18 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 @Composable
 fun BottomNavigationBar(
-    selectedItem: MutableState<Int>
+    navController: NavController
 ) {
     val items = listOf(
-        BottomItem("Каталог", Res.drawable.ic_catalog),
-        BottomItem("Сравнение", Res.drawable.ic_compare),
-        BottomItem("Избранное", Res.drawable.ic_favorite),
-        BottomItem("Корзина", Res.drawable.ic_cart),
-        BottomItem("Профиль", Res.drawable.ic_profile)
+        BottomItem("Каталог", Res.drawable.ic_catalog, Route.CATALOG.name),
+        BottomItem("Сравнение", Res.drawable.ic_compare, Route.COMPARE.name),
+        BottomItem("Избранное", Res.drawable.ic_favorite, Route.FAVORITE.name),
+        BottomItem("Корзина", Res.drawable.ic_cart, Route.CART.name),
+        BottomItem("Профиль", Res.drawable.ic_profile, Route.PROFILE.name)
     )
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+
 
     BottomNavigation {
 
@@ -58,9 +65,9 @@ fun BottomNavigationBar(
                         fontSize = 9.sp
                     )
                 },
-                selected = selectedItem.value == index,
+                selected = currentRoute == item.route,
                 interactionSource = remember { MutableInteractionSource() },
-                onClick = { selectedItem.value = index }
+                onClick = { navController.navigate(item.route) }
             )
         }
     }

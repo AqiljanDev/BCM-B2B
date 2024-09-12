@@ -18,10 +18,12 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import kz.bcm.b2b.data.datasource.CatalogDataSourceImpl
 import kz.bcm.b2b.data.datasource.ProductActionsDataSourceImpl
+import kz.bcm.b2b.data.datasource.ProductsDataSourceImpl
 import kz.bcm.b2b.data.repository.RepositoryImpl
 import kz.bcm.b2b.domain.repository.Repository
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductActionsDataSource
+import kz.bcm.b2b.domain.repository.datasource.ProductsDataSource
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -52,9 +54,9 @@ val dataModule = module {
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
 
                 val token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-                        "eyJpZCI6MiwiZW1haWwiOiJha2lsc2F5ZnVsbGFldjYxQGdtYWlsLm" +
-                        "NvbSIsImNvbXBhbnkiOiJ0ZXN0IiwibWFpbkFkbWluIjoxLCJpYXQi" +
-                        "OjE3MjU0NDcxNzAsImV4cCI6MTcyNjA1MTk3MH0.RidFQiuzKIGCsRyuCa52uulGsBCRYrQibo-Aa8Mdkac"
+                        "eyJpZCI6MiwiZW1haWwiOiJha2lsc2F5ZnVsbGFldjYxQGdtYWlsLmNvb" +
+                        "SIsImNvbXBhbnkiOiJ0ZXN0IiwibWFpbkFkbWluIjoxLCJpYXQiOjE3MjYwNTI5ODksImV4cCI6MTcyNjY1Nzc4OX0." +
+                        "nqDM9rW02b8Yc79Gas1vEUw1rT19EvbwNBbUtRrlSzY"
                 header(HttpHeaders.Authorization, token)
             }
 
@@ -112,6 +114,7 @@ val dataModule = module {
     single<Repository> {
         RepositoryImpl(
             get(),
+            get(),
             get()
         )
     }
@@ -125,6 +128,9 @@ val dataModule = module {
         ProductActionsDataSourceImpl( get() )
     }
 
+    single<ProductsDataSource> {
+        ProductsDataSourceImpl( get() )
+    }
 }
 
 

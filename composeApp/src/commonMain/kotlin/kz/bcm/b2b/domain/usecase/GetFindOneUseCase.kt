@@ -1,7 +1,6 @@
 package kz.bcm.b2b.domain.usecase
 
-import kz.bcm.b2b.data.repository.RepositoryImpl
-import kz.bcm.b2b.domain.data.findOne.Catalog
+import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
 import kz.bcm.b2b.domain.repository.Repository
 
 class GetFindOneUseCase(

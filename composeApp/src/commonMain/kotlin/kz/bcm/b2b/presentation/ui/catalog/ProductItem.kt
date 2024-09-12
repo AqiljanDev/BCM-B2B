@@ -53,12 +53,10 @@ import bcm_b2b.composeapp.generated.resources.inter_regular
 import bcm_b2b.composeapp.generated.resources.oswald_medium
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import kotlinx.coroutines.flow.MutableStateFlow
 import kz.bcm.b2b.data.dto.cart.event.PostCartDto
 import kz.bcm.b2b.domain.data.cart.event.PostCart
-import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
-import kz.bcm.b2b.domain.data.findOne.CharactersToProducts
-import kz.bcm.b2b.domain.data.findOne.Product
+import kz.bcm.b2b.domain.data.findOneCatalog.CharactersToProducts
+import kz.bcm.b2b.domain.data.findOneCatalog.Product
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.Url
@@ -72,7 +70,8 @@ fun ProductItem(
     cartList: List<kz.bcm.b2b.domain.data.cart.mini.Product>,
     clickFavorite: (prodId: String) -> Unit,
     clickCompare: (prodId: String) -> Unit,
-    clickCart: (item: PostCart, id: Int) -> Unit
+    clickCart: (item: PostCart, id: Int) -> Unit,
+    clickRoot: (slug: String) -> Unit
 ) {
     val src = Url.SRC_IMAGE + product.gallery.firstOrNull()?.photo
 
@@ -109,7 +108,10 @@ fun ProductItem(
     Row(
         modifier = Modifier.fillMaxWidth().height(200.dp)
             .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp))
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable {
+                clickRoot(product.slug)
+            },
         horizontalArrangement = Arrangement.spacedBy(15.dp)
     ) {
 
@@ -165,7 +167,6 @@ fun ProductItem(
                         .background(
                             if (stateCompare) ColorMainGreen else Color.White
                         )
-                        .padding(5.dp)
                         .clickable(
                             indication = null,
                             interactionSource = remember {
@@ -242,7 +243,7 @@ fun ProductItem(
                             painter = painterResource(Res.drawable.ic_cart),
                             contentDescription = null,
                             tint = Color.White,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(24.dp)
                         )
 
                         Text(
@@ -370,6 +371,9 @@ fun CharacterList(list: List<CharactersToProducts>, takeCount: Int = 3) {
     }
 }
 
-private fun getIdFromCartMini(cartMini: List<kz.bcm.b2b.domain.data.cart.mini.Product>, prodId: String): Int {
+fun getIdFromCartMini(
+    cartMini: List<kz.bcm.b2b.domain.data.cart.mini.Product>,
+    prodId: String
+): Int {
     return cartMini.find { it.prodId == prodId }?.id ?: 0
 }

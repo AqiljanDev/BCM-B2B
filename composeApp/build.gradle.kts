@@ -41,6 +41,7 @@ kotlin {
             implementation(libs.koin.android)
         }
         commonMain.dependencies {
+            // Default dependencies
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -49,6 +50,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
+            // Http requests
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.cio) // or another engine
             implementation(libs.ktor.client.json)
@@ -56,13 +58,19 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
 
+            // Serialization
             implementation(libs.kotlinx.serialization.json)
 
+            // DI
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.composeVM)
 
+            // Media and image
             implementation(libs.media.kamel.image)
+
+            // navigation
+            implementation(libs.navigation.compose)
         }
 
         desktopMain.dependencies {

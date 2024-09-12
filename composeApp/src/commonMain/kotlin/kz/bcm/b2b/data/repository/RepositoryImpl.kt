@@ -1,16 +1,19 @@
 package kz.bcm.b2b.data.repository
 
-import kz.bcm.b2b.data.datasource.CatalogDataSourceImpl
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
-import kz.bcm.b2b.domain.data.findOne.Catalog
+import kz.bcm.b2b.domain.data.collectCharacters.CollectCharacters
+import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
+import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.domain.repository.Repository
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductActionsDataSource
+import kz.bcm.b2b.domain.repository.datasource.ProductsDataSource
 
 class RepositoryImpl(
     private val catalogDataSource: CatalogDataSource,
+    private val productsDataSource: ProductsDataSource,
     private val productActionsDataSource: ProductActionsDataSource
 ) : Repository {
     override suspend fun findOne(
@@ -23,6 +26,20 @@ class RepositoryImpl(
     ): Catalog {
         return catalogDataSource.findOne(category, min, max, sort, f, page)
     }
+
+    override suspend fun collectCharacters(
+        category: String,
+        min: Int?,
+        f: String
+    ): CollectCharacters {
+        return catalogDataSource.collectCharacters(category, min, f)
+    }
+
+
+    override suspend fun findOneProduct(slug: String): FindOneProduct {
+        return productsDataSource.findOne(slug)
+    }
+
 
     override suspend fun eventCompare(prodId: String): List<GetMini> {
         return productActionsDataSource.eventCompare(prodId)
