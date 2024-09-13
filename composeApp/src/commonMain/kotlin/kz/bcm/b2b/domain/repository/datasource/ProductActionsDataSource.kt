@@ -1,8 +1,10 @@
 package kz.bcm.b2b.domain.repository.datasource
 
 import kz.bcm.b2b.domain.data.cart.event.PostCart
+import kz.bcm.b2b.domain.data.cart.full.GetCartFull
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
+import kz.bcm.b2b.domain.data.wishlistAndCompare.wishlist.WishListFull
 
 interface ProductActionsDataSource {
 
@@ -11,9 +13,11 @@ interface ProductActionsDataSource {
 
     suspend fun eventFavorite(prodId: String): List<GetMini>
     suspend fun getMiniFavorite(): List<GetMini>
+    suspend fun getFullFavorite(): List<WishListFull>
 
 
     suspend fun eventCart(item: PostCart): GetCartMini
     suspend fun getMiniCart(): GetCartMini
+    suspend fun getFullCart(): GetCartFull
     suspend fun removeCart(id: Int): GetCartMini
 }

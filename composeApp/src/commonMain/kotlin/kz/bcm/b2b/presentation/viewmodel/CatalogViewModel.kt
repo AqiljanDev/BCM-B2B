@@ -52,6 +52,9 @@ class CatalogViewModel(
         page: Int
     ) {
         viewModelScope.launch {
+
+            println("CatalogViewModel -> getFindOne = category: $category")
+
             val res = getFindOneUseCase.execute(category, min, max, sort, f, page)
 
             _catalog.emit(res)

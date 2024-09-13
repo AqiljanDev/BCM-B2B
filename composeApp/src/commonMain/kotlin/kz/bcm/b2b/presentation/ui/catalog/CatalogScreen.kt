@@ -69,13 +69,21 @@ fun CatalogScreen(navController: NavHostController, slug: String? = null) {
         viewModel.getFindOne(category = currentCategory, page = currentPager)
 
         listState.scrollToItem(0)
+        println("getFindOne in Catalog screen")
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(stateCatalog) {
         viewModel.initializeData()
+
+        println("initializeData in Catalog screen")
+    }
+
+    LaunchedEffect(stateCart) {
+        println()
     }
 
     LaunchedEffect(Unit, currentCategory) {
+
         viewModel.getPage(category = currentCategory)
     }
 
@@ -87,6 +95,8 @@ fun CatalogScreen(navController: NavHostController, slug: String? = null) {
 
         item {
             Breadcrumbs(
+                stateCatalog.value.info.title,
+                stateCatalog.value.info.slug,
                 stateCatalog.value.info.parentCategory
             ) { slugStr ->
                 currentCategory = slugStr
@@ -157,7 +167,7 @@ fun CatalogScreen(navController: NavHostController, slug: String? = null) {
                 clickFavorite = { prodId -> viewModel.eventFavorite(prodId) },
                 clickCompare = { prodId -> viewModel.eventCompare(prodId) },
                 clickCart = { item, id -> viewModel.eventCart(item, id) },
-                clickRoot = { slug -> navController.navigate("${Route.CARD.name}/$slug") }
+                clickRoot = { slug -> navController.navigate("${Route.CARD.route}/$slug") }
             )
         }
 
@@ -175,10 +185,12 @@ fun CatalogScreen(navController: NavHostController, slug: String? = null) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Breadcrumbs(
+    title: String,
+    slug: String,
     parentCategory: ParentCategory?,
     onClick: (slug: String) -> Unit
 ) {
-    val list = mutableListOf<Pair<String, String>>()
+    val list = mutableListOf<Pair<String, String>>(title to slug)
     var parent = parentCategory
 
     println("parent category = $parentCategory")

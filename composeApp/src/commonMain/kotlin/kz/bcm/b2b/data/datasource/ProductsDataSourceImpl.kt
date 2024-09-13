@@ -12,6 +12,8 @@ class ProductsDataSourceImpl(
 ) : ProductsDataSource {
 
     override suspend fun findOne(slug: String): FindOneProduct {
+        println("ProductSource -> findOne = slug: $slug")
+
         val response: FindOneProductDto = httpClient.get("products/$slug").body()
 
         return response

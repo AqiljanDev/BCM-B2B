@@ -22,6 +22,7 @@ class CatalogDataSourceImpl(
         f: String,
         page: Int
     ): Catalog {
+        println("CatalogSource -> findOne = category: $category, page: $page")
 
         val url = buildString {
             append("catalog/$category?page=$page")

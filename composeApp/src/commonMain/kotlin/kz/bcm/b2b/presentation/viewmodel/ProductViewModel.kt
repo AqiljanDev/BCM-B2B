@@ -41,6 +41,8 @@ open class ProductViewModel(
         getMiniCompare()
         getMiniFavorite()
         getMiniCart()
+
+        println("Favorite screen = initializeData")
     }
 
 
@@ -63,12 +65,13 @@ open class ProductViewModel(
     private fun getMiniCart() {
         viewModelScope.launch {
             val res = getCartMiniUseCase.execute()
+            println("getMiniCart - ProductViewModel")
 
             _cart.emit(res)
         }
     }
 
-    fun eventCompare(prodId: String) {
+    open fun eventCompare(prodId: String) {
         viewModelScope.launch {
             val res = eventCompareUseCase.execute(prodId)
 
@@ -76,9 +79,10 @@ open class ProductViewModel(
         }
     }
 
-    fun eventFavorite(prodId: String) {
+    open fun eventFavorite(prodId: String) {
         viewModelScope.launch {
             val res = eventFavoriteUseCase.execute(prodId)
+            println("Favorite Screen = event $res")
 
             _favorite.emit(res)
         }

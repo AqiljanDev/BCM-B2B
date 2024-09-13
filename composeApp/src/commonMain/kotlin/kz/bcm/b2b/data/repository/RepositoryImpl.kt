@@ -1,20 +1,27 @@
 package kz.bcm.b2b.data.repository
 
+import kz.bcm.b2b.domain.data.bill.BillMy
 import kz.bcm.b2b.domain.data.cart.event.PostCart
+import kz.bcm.b2b.domain.data.cart.full.GetCartFull
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
 import kz.bcm.b2b.domain.data.collectCharacters.CollectCharacters
 import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
 import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
+import kz.bcm.b2b.domain.data.orders.OrderDetails
+import kz.bcm.b2b.domain.data.orders.PostOrders
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
+import kz.bcm.b2b.domain.data.wishlistAndCompare.wishlist.WishListFull
 import kz.bcm.b2b.domain.repository.Repository
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductActionsDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductsDataSource
+import kz.bcm.b2b.domain.repository.datasource.ProfileActionsDataSource
 
 class RepositoryImpl(
     private val catalogDataSource: CatalogDataSource,
     private val productsDataSource: ProductsDataSource,
-    private val productActionsDataSource: ProductActionsDataSource
+    private val productActionsDataSource: ProductActionsDataSource,
+    private val profileActionsDataSource: ProfileActionsDataSource
 ) : Repository {
     override suspend fun findOne(
         category: String,
@@ -58,6 +65,11 @@ class RepositoryImpl(
         return productActionsDataSource.getMiniFavorite()
     }
 
+    override suspend fun getFullFavorite(): List<WishListFull> {
+        return productActionsDataSource.getFullFavorite()
+    }
+
+
 
     override suspend fun eventCart(item: PostCart): GetCartMini {
         return productActionsDataSource.eventCart(item)
@@ -67,9 +79,22 @@ class RepositoryImpl(
         return productActionsDataSource.getMiniCart()
     }
 
+    override suspend fun getFullCart(): GetCartFull {
+        return productActionsDataSource.getFullCart()
+    }
+
     override suspend fun deleteCart(id: Int): GetCartMini {
         return productActionsDataSource.removeCart(id)
     }
 
+
+
+    override suspend fun getBillMy(): List<BillMy> {
+        return profileActionsDataSource.getBillMy()
+    }
+
+    override suspend fun postOrders(orders: PostOrders): OrderDetails {
+        return profileActionsDataSource.postOrders(orders)
+    }
 
 }

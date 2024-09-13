@@ -19,11 +19,13 @@ import kotlinx.serialization.json.Json
 import kz.bcm.b2b.data.datasource.CatalogDataSourceImpl
 import kz.bcm.b2b.data.datasource.ProductActionsDataSourceImpl
 import kz.bcm.b2b.data.datasource.ProductsDataSourceImpl
+import kz.bcm.b2b.data.datasource.ProfileActionsDataSourceImpl
 import kz.bcm.b2b.data.repository.RepositoryImpl
 import kz.bcm.b2b.domain.repository.Repository
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductActionsDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductsDataSource
+import kz.bcm.b2b.domain.repository.datasource.ProfileActionsDataSource
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -115,6 +117,7 @@ val dataModule = module {
         RepositoryImpl(
             get(),
             get(),
+            get(),
             get()
         )
     }
@@ -130,6 +133,10 @@ val dataModule = module {
 
     single<ProductsDataSource> {
         ProductsDataSourceImpl( get() )
+    }
+
+    single<ProfileActionsDataSource> {
+        ProfileActionsDataSourceImpl( get() )
     }
 }
 

@@ -107,14 +107,10 @@ fun CardScreen(navController: NavController, slug: String?) {
     val stateCart = viewModel.cart.collectAsState()
 
     LaunchedEffect(Unit) {
+        println("view model product = initializeData, slug: $slug")
         viewModel.getFindOneProduct(slug ?: throw Exception("Slug not passed to CardScreen"))
         viewModel.initializeData()
 
-        println("view model product = initializeData, slug: $slug")
-    }
-
-    LaunchedEffect(stateCompare, stateFavorite, stateCart) {
-        println("compare: ${stateCompare.value}, favorite: ${stateFavorite.value}, cart: ${stateCart.value}")
     }
 
     Column(
@@ -127,8 +123,14 @@ fun CardScreen(navController: NavController, slug: String?) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Breadcrumbs(stateProduct.value.categories.parentCategory) { slugStr ->
-            navController.navigate("${Route.CATALOG.name}/$slugStr")
+        Breadcrumbs(
+            stateProduct.value.categories.title,
+            stateProduct.value.categories.slug,
+            stateProduct.value.categories.parentCategory
+        ) { slugStr ->
+            println("slug: ${stateProduct.value.categories.slug}, name: ${Route.CATALOG.route} vs ${Route.CARD.route}")
+
+            navController.navigate("${Route.CATALOG.route}/$slugStr")
         }
 
         Text(
@@ -207,7 +209,7 @@ fun CardScreen(navController: NavController, slug: String?) {
                     clickFavorite = { prodId -> viewModel.eventFavorite(prodId) },
                     clickCompare = { prodId -> viewModel.eventCompare(prodId) },
                     clickCart = { item, id -> viewModel.eventCart(item, id) },
-                    clickRoot = { slug -> navController.navigate("${Route.CARD.name}/$slug") }
+                    clickRoot = { slug -> navController.navigate("${Route.CARD.route}/$slug") }
                 )
             }
         }
