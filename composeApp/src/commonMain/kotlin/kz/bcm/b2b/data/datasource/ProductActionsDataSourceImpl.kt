@@ -8,11 +8,13 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kz.bcm.b2b.data.dto.cart.full.GetCartFullDto
 import kz.bcm.b2b.data.dto.cart.mini.GetCartMiniDto
+import kz.bcm.b2b.data.dto.compare.CompareFullDto
 import kz.bcm.b2b.data.dto.wishlistAndCompare.GetMiniDto
 import kz.bcm.b2b.data.dto.wishlistAndCompare.wishlist.WishListFullDto
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.full.GetCartFull
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
+import kz.bcm.b2b.domain.data.compare.CompareFull
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.domain.data.wishlistAndCompare.wishlist.WishListFull
 import kz.bcm.b2b.domain.repository.datasource.ProductActionsDataSource
@@ -32,6 +34,14 @@ class ProductActionsDataSourceImpl(
 
         return response
     }
+
+    override suspend fun getFullCompare(): CompareFull {
+        val response: CompareFullDto = httpClient.get("compare").body()
+
+        return response
+    }
+
+
 
     override suspend fun eventFavorite(prodId: String): List<GetMini> {
         val response: List<GetMiniDto> = httpClient.post("wishlist/$prodId").body()

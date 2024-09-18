@@ -1,7 +1,7 @@
-package kz.bcm.b2b.data.dto.orders
+package kz.bcm.b2b.data.dto.order.orders
 
 import kotlinx.serialization.Serializable
-import kz.bcm.b2b.domain.data.orders.PostOrders
+import kz.bcm.b2b.domain.data.order.orders.PostOrders
 
 @Serializable
 data class PostOrdersDto(

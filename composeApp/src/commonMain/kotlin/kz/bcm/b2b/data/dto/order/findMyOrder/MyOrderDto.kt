@@ -1,10 +1,10 @@
-package kz.bcm.b2b.data.dto.orders
+package kz.bcm.b2b.data.dto.order.findMyOrder
 
 import kotlinx.serialization.Serializable
-import kz.bcm.b2b.domain.data.orders.OrderDetails
+import kz.bcm.b2b.domain.data.order.findMyOrder.MyOrder
 
 @Serializable
-data class OrderDetailsDto(
+data class MyOrderDto(
     override val id: Int = 0,
     override val address: String = "",
     override val commentUser: String = "",
@@ -14,5 +14,8 @@ data class OrderDetailsDto(
     override val deliverId: Int = 0,
     override val orderStatusId: Int = 0,
     override val usersId: Int = 0,
-    override val adminId: Int? = null
-) : OrderDetails
+    override val adminId: String? = null,
+    override val userBill: MyOrderUserBillDto = MyOrderUserBillDto(),
+    override val orderStatus: MyOrderStatusDto = MyOrderStatusDto(),
+    override val products: List<MyOrderProductDto> = emptyList()
+): MyOrder

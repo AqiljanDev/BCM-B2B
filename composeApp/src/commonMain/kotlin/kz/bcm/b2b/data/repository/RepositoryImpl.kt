@@ -1,14 +1,19 @@
 package kz.bcm.b2b.data.repository
 
+import kz.bcm.b2b.domain.data.bill.BillBody
 import kz.bcm.b2b.domain.data.bill.BillMy
+import kz.bcm.b2b.domain.data.cabinet.Cabinet
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.full.GetCartFull
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
 import kz.bcm.b2b.domain.data.collectCharacters.CollectCharacters
+import kz.bcm.b2b.domain.data.compare.CompareFull
+import kz.bcm.b2b.domain.data.order.findMyOrder.MyOrder
 import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
+import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
-import kz.bcm.b2b.domain.data.orders.OrderDetails
-import kz.bcm.b2b.domain.data.orders.PostOrders
+import kz.bcm.b2b.domain.data.order.orders.OrderDetails
+import kz.bcm.b2b.domain.data.order.orders.PostOrders
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.domain.data.wishlistAndCompare.wishlist.WishListFull
 import kz.bcm.b2b.domain.repository.Repository
@@ -23,6 +28,7 @@ class RepositoryImpl(
     private val productActionsDataSource: ProductActionsDataSource,
     private val profileActionsDataSource: ProfileActionsDataSource
 ) : Repository {
+
     override suspend fun findOne(
         category: String,
         min: Int?,
@@ -54,6 +60,10 @@ class RepositoryImpl(
 
     override suspend fun getMiniCompare(): List<GetMini> {
         return productActionsDataSource.getMiniCompare()
+    }
+
+    override suspend fun getFullCompare(): CompareFull {
+        return productActionsDataSource.getFullCompare()
     }
 
 
@@ -89,12 +99,51 @@ class RepositoryImpl(
 
 
 
+
     override suspend fun getBillMy(): List<BillMy> {
         return profileActionsDataSource.getBillMy()
     }
 
+    override suspend fun createBill(body: BillBody): BillMy {
+        return profileActionsDataSource.postBill(body)
+    }
+
+    override suspend fun updateBill(id: Int, body: BillBody): BillMy {
+        return profileActionsDataSource.putBill(id, body)
+    }
+
+    override suspend fun deleteBill(id: Int) {
+        profileActionsDataSource.delBill(id)
+    }
+
+
+
+
     override suspend fun postOrders(orders: PostOrders): OrderDetails {
         return profileActionsDataSource.postOrders(orders)
     }
+
+    override suspend fun getMyOrder(): List<MyOrder> {
+        return profileActionsDataSource.getMyOrders()
+    }
+
+    override suspend fun getUserDiscount(): List<UserDiscount> {
+        return profileActionsDataSource.getUserDiscount()
+    }
+
+    override suspend fun getFindOneOrder(id: Int): kz.bcm.b2b.domain.data.order.findOne.FindOneProduct {
+        return profileActionsDataSource.getFindOneOrder(id)
+    }
+
+
+
+    override suspend fun getCabinet(): Cabinet {
+        return profileActionsDataSource.getCabinet()
+    }
+
+    override suspend fun updateCabinet(cabinet: Cabinet): Cabinet {
+        return profileActionsDataSource.updateCabinet(cabinet)
+    }
+
 
 }

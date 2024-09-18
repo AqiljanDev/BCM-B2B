@@ -8,7 +8,9 @@ import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.ui.card.CardScreen
 import kz.bcm.b2b.presentation.ui.cart.CartScreen
 import kz.bcm.b2b.presentation.ui.catalog.CatalogScreen
+import kz.bcm.b2b.presentation.ui.compare.CompareScreen
 import kz.bcm.b2b.presentation.ui.favorite.FavoriteScreen
+import kz.bcm.b2b.presentation.ui.profile.ProfileScreen
 
 @Composable
 fun NavGraph(
@@ -31,7 +33,7 @@ fun NavGraph(
         }
 
         composable(Route.COMPARE.route) {
-
+            CompareScreen(navController)
         }
 
         composable(Route.FAVORITE.route) {
@@ -43,7 +45,7 @@ fun NavGraph(
         }
 
         composable(Route.PROFILE.route) {
-
+            ProfileScreen(navController)
         }
 
 

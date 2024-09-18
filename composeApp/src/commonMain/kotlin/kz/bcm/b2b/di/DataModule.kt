@@ -1,6 +1,7 @@
 package kz.bcm.b2b.di
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
@@ -57,8 +58,8 @@ val dataModule = module {
 
                 val token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
                         "eyJpZCI6MiwiZW1haWwiOiJha2lsc2F5ZnVsbGFldjYxQGdtYWlsLmNvb" +
-                        "SIsImNvbXBhbnkiOiJ0ZXN0IiwibWFpbkFkbWluIjoxLCJpYXQiOjE3MjYwNTI5ODksImV4cCI6MTcyNjY1Nzc4OX0." +
-                        "nqDM9rW02b8Yc79Gas1vEUw1rT19EvbwNBbUtRrlSzY"
+                        "SIsImNvbXBhbnkiOiJDb21wYW55IiwibWFpbkFkbWluIjoxLCJpYXQiOjE3MjY2NTgzNDcs" +
+                        "ImV4cCI6MTcyNzI2MzE0N30.60T6SOxfsRwXz8aZBg-0pK5zzOcssRriEPmC9zq4RZE"
                 header(HttpHeaders.Authorization, token)
             }
 

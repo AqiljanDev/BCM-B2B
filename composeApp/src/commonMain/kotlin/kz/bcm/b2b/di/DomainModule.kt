@@ -1,19 +1,28 @@
 package kz.bcm.b2b.di
 
+import kz.bcm.b2b.domain.usecase.DeleteBillUseCase
 import kz.bcm.b2b.domain.usecase.DeleteCartUseCase
 import kz.bcm.b2b.domain.usecase.EventCartUseCase
 import kz.bcm.b2b.domain.usecase.EventCompareUseCase
 import kz.bcm.b2b.domain.usecase.EventFavoriteUseCase
 import kz.bcm.b2b.domain.usecase.GetBillMyUseCase
+import kz.bcm.b2b.domain.usecase.GetCabinetUseCase
 import kz.bcm.b2b.domain.usecase.GetCartFullUseCase
 import kz.bcm.b2b.domain.usecase.GetCartMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetCollectCharactersUseCase
+import kz.bcm.b2b.domain.usecase.GetCompareFullUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteFullUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteMiniUseCase
+import kz.bcm.b2b.domain.usecase.GetFindOneOrderUseCase
 import kz.bcm.b2b.domain.usecase.GetFindOneProductsUseCase
 import kz.bcm.b2b.domain.usecase.GetFindOneUseCase
+import kz.bcm.b2b.domain.usecase.GetMyOrdersUseCase
+import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
+import kz.bcm.b2b.domain.usecase.PostBillUseCase
 import kz.bcm.b2b.domain.usecase.PostOrdersUseCase
+import kz.bcm.b2b.domain.usecase.PutBillUseCase
+import kz.bcm.b2b.domain.usecase.PutCabinetUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -59,6 +68,9 @@ val domainModule = module {
     factory {
         GetFavoriteFullUseCase( get() )
     }
+    factory {
+        GetCompareFullUseCase( get() )
+    }
 
 
 
@@ -90,6 +102,45 @@ val domainModule = module {
     }
 
     factory {
+        PostBillUseCase( get() )
+    }
+
+    factory {
+        PutBillUseCase( get() )
+    }
+
+    factory {
+        DeleteBillUseCase( get() )
+    }
+
+
+
+    // Request profile action: order
+    factory {
         PostOrdersUseCase( get() )
+    }
+
+    factory {
+        GetMyOrdersUseCase( get() )
+    }
+
+    factory {
+        GetFindOneOrderUseCase( get() )
+    }
+
+
+    // Request profile action: discount
+    factory {
+        GetUserDiscountUseCase( get() )
+    }
+
+
+    // Request profile action: Cabinet
+    factory {
+        GetCabinetUseCase( get() )
+    }
+
+    factory {
+        PutCabinetUseCase( get() )
     }
 }

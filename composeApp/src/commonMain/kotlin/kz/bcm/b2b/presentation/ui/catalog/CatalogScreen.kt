@@ -78,10 +78,6 @@ fun CatalogScreen(navController: NavHostController, slug: String? = null) {
         println("initializeData in Catalog screen")
     }
 
-    LaunchedEffect(stateCart) {
-        println()
-    }
-
     LaunchedEffect(Unit, currentCategory) {
 
         viewModel.getPage(category = currentCategory)

@@ -53,10 +53,10 @@ import bcm_b2b.composeapp.generated.resources.inter_regular
 import bcm_b2b.composeapp.generated.resources.oswald_medium
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kz.bcm.b2b.data.dto.orders.PostOrdersDto
+import kz.bcm.b2b.data.dto.order.orders.PostOrdersDto
 import kz.bcm.b2b.domain.data.bill.BillMy
 import kz.bcm.b2b.domain.data.cart.full.CartFullProduct
-import kz.bcm.b2b.domain.data.orders.PostOrders
+import kz.bcm.b2b.domain.data.order.orders.PostOrders
 import kz.bcm.b2b.presentation.other.data.ProductBasketCreate
 import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.other.theme.ColorGreyDavy
@@ -163,7 +163,7 @@ private fun FormFieldsCard(
     clickDesign: (order: PostOrders) -> Unit
 ) {
     val items = listOf("Самовывоз", "Доставка")
-    val itemsBills = listOf("Выберете расчетный счет") + bill.map { it.bank }
+    val itemsBills = listOf("Выберете расчетный счет") + bill.map { it.code }
 
     val stateSelectedDelivery = remember {
         mutableStateOf("Самовывоз")

@@ -13,7 +13,7 @@ import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.full.CartFullProduct
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
 import kz.bcm.b2b.domain.data.findOneCatalog.Product
-import kz.bcm.b2b.domain.data.orders.PostOrders
+import kz.bcm.b2b.domain.data.order.orders.PostOrders
 import kz.bcm.b2b.domain.usecase.DeleteCartUseCase
 import kz.bcm.b2b.domain.usecase.EventCartUseCase
 import kz.bcm.b2b.domain.usecase.GetBillMyUseCase

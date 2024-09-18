@@ -1,4 +1,4 @@
-package kz.bcm.b2b.domain.data.orders
+package kz.bcm.b2b.domain.data.order.orders
 
 interface OrderDetails {
     val id: Int
