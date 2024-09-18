@@ -26,7 +26,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.ic_menu_burger
+import bcm_b2b.composeapp.generated.resources.ic_minus_red
 import bcm_b2b.composeapp.generated.resources.ic_search
+import bcm_b2b.composeapp.generated.resources.logo_horizontal
 import kotlinx.coroutines.launch
 import kz.bcm.b2b.presentation.ui.catalog.CatalogScreen
 import org.jetbrains.compose.resources.painterResource
@@ -50,10 +52,15 @@ fun MainScreen() {
                 TopAppBar(
                     title = {
                         Box(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("My Centered Title")
+                            Icon(
+                                painter = painterResource(Res.drawable.logo_horizontal),
+                                contentDescription = "logo",
+                                modifier = Modifier.fillMaxSize(),
+                                tint = Color.Unspecified
+                            )
                         }
                     },
                     backgroundColor = Color.White,
