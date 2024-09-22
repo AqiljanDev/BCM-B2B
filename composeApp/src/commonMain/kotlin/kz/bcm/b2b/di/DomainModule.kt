@@ -20,7 +20,9 @@ import kz.bcm.b2b.domain.usecase.GetFindOneUseCase
 import kz.bcm.b2b.domain.usecase.GetMyOrdersUseCase
 import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 import kz.bcm.b2b.domain.usecase.PostBillUseCase
+import kz.bcm.b2b.domain.usecase.PostLoginUseCase
 import kz.bcm.b2b.domain.usecase.PostOrdersUseCase
+import kz.bcm.b2b.domain.usecase.PostRegistrationUseCase
 import kz.bcm.b2b.domain.usecase.PutBillUseCase
 import kz.bcm.b2b.domain.usecase.PutCabinetUseCase
 import org.koin.dsl.module
@@ -142,5 +144,15 @@ val domainModule = module {
 
     factory {
         PutCabinetUseCase( get() )
+    }
+
+
+    // Auth
+    factory {
+        PostLoginUseCase( get() )
+    }
+
+    factory {
+        PostRegistrationUseCase( get() )
     }
 }

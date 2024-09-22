@@ -378,7 +378,7 @@ fun Comment(
 
 
 @Composable
-private fun DropDownMain(
+fun DropDownMain(
     items: List<String>,
     selectedItem: MutableState<String>
 ) {

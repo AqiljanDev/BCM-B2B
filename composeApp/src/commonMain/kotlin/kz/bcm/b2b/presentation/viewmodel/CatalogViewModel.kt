@@ -68,9 +68,13 @@ class CatalogViewModel(
         f: String = ""
     ) {
         viewModelScope.launch {
-            val res = getCollectCharactersUseCase.execute(category, min, f)
+            try {
+                val res = getCollectCharactersUseCase.execute(category, min, f)
 
-            _page.emit(res.pages)
+                _page.emit(res.pages)
+            }catch (e: Exception) {
+                println("sss")
+            }
         }
     }
 

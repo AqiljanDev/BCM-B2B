@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.inter_bold
@@ -47,7 +48,7 @@ import org.koin.core.definition.indexKey
 @OptIn(ExperimentalLayoutApi::class)
 @Preview
 @Composable
-fun CatalogScreen(navController: NavHostController, slug: String? = null) {
+fun CatalogScreen(navController: NavController, slug: String? = null) {
     val viewModel: CatalogViewModel = koinInject()
     val listState = rememberLazyListState()
 

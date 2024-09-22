@@ -69,8 +69,11 @@ kotlin {
             // Media and image
             implementation(libs.media.kamel.image)
 
-            // navigation
+            // Navigation
             implementation(libs.navigation.compose)
+
+            // Shared preference
+            implementation(libs.multiplatform.settings.no.arg)
         }
 
         desktopMain.dependencies {

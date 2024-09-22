@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,19 +28,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavigatorState
 import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.inter_medium
+import kotlinx.coroutines.launch
+import kz.bcm.b2b.di.NavigationState
+import kz.bcm.b2b.di.NavigationStateHolder
+import kz.bcm.b2b.presentation.other.data.Route
 import org.jetbrains.compose.resources.Font
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.ColorMunsell
 import kz.bcm.b2b.presentation.viewmodel.ProfileViewModel
+import kz.bcm.b2b.sharedPref.URL
+import kz.bcm.b2b.sharedPref.removeStringSharedPref
 import org.koin.compose.koinInject
 
 
 @Composable
-fun ProfileScreen(navController: NavHostController) {
+fun ProfileScreen(navController: NavController) {
     val viewModel: ProfileViewModel = koinInject()
+    val coroutineScope = rememberCoroutineScope()
 
     val stateOrder = viewModel.order.collectAsState()
     val stateOrderFindOne = viewModel.orderFindOne.collectAsState()
@@ -127,12 +137,16 @@ fun ProfileScreen(navController: NavHostController) {
 
 
         AnimatedVisibility(visible = stateActive == ProfileItems.PASSWORD) {
-            Text(stateActive.title)
+            navController.navigate(Route.RESTORE_CODE.route)
         }
 
 
         AnimatedVisibility(visible = stateActive == ProfileItems.EXIT) {
-            Text(stateActive.title)
+            coroutineScope.launch {
+                removeStringSharedPref(URL.TOKEN.key)
+
+                NavigationStateHolder.navigationState.emit(NavigationState.TokenExpired)
+            }
         }
 
 

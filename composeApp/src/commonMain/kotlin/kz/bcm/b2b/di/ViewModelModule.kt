@@ -7,6 +7,8 @@ import kz.bcm.b2b.presentation.viewmodel.CatalogViewModel
 import kz.bcm.b2b.presentation.viewmodel.CompareViewModel
 import kz.bcm.b2b.presentation.viewmodel.FavoriteViewModel
 import kz.bcm.b2b.presentation.viewmodel.ProfileViewModel
+import kz.bcm.b2b.presentation.ui.splash.SplashViewModel
+import kz.bcm.b2b.presentation.viewmodel.LoginViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -64,6 +66,16 @@ val viewModelModule = module {
             get(), get(),
             get(), get(),
             get(), get()
+        )
+    }
+
+    single {
+        SplashViewModel( get() )
+    }
+
+    single {
+        LoginViewModel(
+            get()
         )
     }
 }

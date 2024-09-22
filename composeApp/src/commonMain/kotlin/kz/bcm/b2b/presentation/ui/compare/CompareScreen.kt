@@ -57,6 +57,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.ic_back
@@ -92,7 +93,7 @@ import org.koin.compose.koinInject
 
 
 @Composable
-fun CompareScreen(navController: NavHostController) {
+fun CompareScreen(navController: NavController) {
     val viewModel: CompareViewModel = koinInject()
 
     val stateScroll = rememberScrollState()

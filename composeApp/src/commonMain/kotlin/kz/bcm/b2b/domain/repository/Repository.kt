@@ -1,6 +1,9 @@
 package kz.bcm.b2b.domain.repository
 
 import kz.bcm.b2b.data.dto.wishlistAndCompare.wishlist.WishListFullDto
+import kz.bcm.b2b.domain.data.auth.AccessToken
+import kz.bcm.b2b.domain.data.auth.login.PostLogin
+import kz.bcm.b2b.domain.data.auth.register.PostRegistration
 import kz.bcm.b2b.domain.data.bill.BillBody
 import kz.bcm.b2b.domain.data.bill.BillMy
 import kz.bcm.b2b.domain.data.cabinet.Cabinet
@@ -70,4 +73,9 @@ interface Repository {
 
     suspend fun getCabinet(): Cabinet
     suspend fun updateCabinet(cabinet: Cabinet): Cabinet
+
+
+
+    suspend fun login(body: PostLogin): AccessToken
+    suspend fun registration(body: PostRegistration): AccessToken
 }

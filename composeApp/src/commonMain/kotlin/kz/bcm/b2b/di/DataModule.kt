@@ -7,26 +7,34 @@ import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.RedirectResponseException
+import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kz.bcm.b2b.data.datasource.AuthDataSourceImpl
 import kz.bcm.b2b.data.datasource.CatalogDataSourceImpl
 import kz.bcm.b2b.data.datasource.ProductActionsDataSourceImpl
 import kz.bcm.b2b.data.datasource.ProductsDataSourceImpl
 import kz.bcm.b2b.data.datasource.ProfileActionsDataSourceImpl
 import kz.bcm.b2b.data.repository.RepositoryImpl
 import kz.bcm.b2b.domain.repository.Repository
+import kz.bcm.b2b.domain.repository.datasource.AuthDataSource
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductActionsDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductsDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProfileActionsDataSource
+import kz.bcm.b2b.sharedPref.URL
+import kz.bcm.b2b.sharedPref.getStringSharedPref
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -53,58 +61,53 @@ val dataModule = module {
 
             // Добавление пользовательских заголовков
             defaultRequest {
+                val token = getStringSharedPref(URL.TOKEN.key)
+                println("token: $token")
+
                 header(HttpHeaders.Accept, ContentType.Application.Json)
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
-
-                val token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-                        "eyJpZCI6MiwiZW1haWwiOiJha2lsc2F5ZnVsbGFldjYxQGdtYWlsLmNvb" +
-                        "SIsImNvbXBhbnkiOiJDb21wYW55IiwibWFpbkFkbWluIjoxLCJpYXQiOjE3MjY2NTgzNDcs" +
-                        "ImV4cCI6MTcyNzI2MzE0N30.60T6SOxfsRwXz8aZBg-0pK5zzOcssRriEPmC9zq4RZE"
-                header(HttpHeaders.Authorization, token)
+                header(HttpHeaders.Authorization, "Bearer $token")
             }
 
             // Обработка ошибок с помощью HttpResponseValidator
             HttpResponseValidator {
                 validateResponse { response ->
-                    // Проверяем HTTP код ответа
-                    when (response.status.value) {
-                        in 300..399 -> throw RedirectResponseException(
-                            response,
-                            "Redirection error"
-                        )
+                    if (response.status.value >= 300) {
 
-                        in 400..499 -> throw ClientRequestException(response, "Client error")
-                        in 500..599 -> throw ServerResponseException(response, "Server error")
-                        else -> {
-                            println("Unknown error")
-                        }
+                        NavigationStateHolder.navigationState.emit(NavigationState.TokenExpired)
+                        println("Ошибка status >= 300: $response")
+                    } else {
+
+                        NavigationStateHolder.navigationState.emit(NavigationState.TokenExpired)
+                        println("Unknow error: $response")
                     }
                 }
 
-                // Перехватываем исключения
-                handleResponseExceptionWithRequest { exception, request ->
-                    when (exception) {
-                        is ClientRequestException -> {
-                            // Обработка ошибок клиента (например, 400 Bad Request)
-                            println("Client Error: ${exception.response.status.description}")
-                        }
-
-                        is ServerResponseException -> {
-                            // Обработка серверных ошибок (например, 500 Internal Server Error)
-                            println("Server Error: ${exception.response.status.description}")
-                        }
-
-                        is RedirectResponseException -> {
-                            // Обработка ошибок перенаправления (например, 301 Moved Permanently)
-                            println("Redirect Error: ${exception.response.status.description}")
-                        }
-
-                        else -> {
-                            // Обработка других исключений
-                            println("Other Error: ${exception.message}")
-                        }
-                    }
-                }
+//                handleResponseException { cause ->
+//                    when (cause) {
+//                        is ResponseException -> {
+//                            val responseBody = cause.response.bodyAsText()  // Получаем текст тела ответа
+//
+//                            // Пытаемся распарсить JSON
+//                            try {
+//                                val errorResponse = Json.decodeFromString<ErrorResponse>(responseBody)
+//
+//                                // Получаем сообщение из errorResponse
+//                                errorResponse.message?.let { messages ->
+//                                    println("Messages: $messages")
+//                                } ?: run {
+//                                    println("Error: ${errorResponse.error}, StatusCode: ${errorResponse.statusCode}")
+//                                }
+//                            } catch (e: Exception) {
+//                                println("Error parsing response: ${e.message}")
+//                            }
+//                        }
+//                        else -> {
+//                            // Общая обработка ошибок
+//                            println("Exception: ${cause.message}")
+//                        }
+//                    }
+//                }
             }
 
             // Логгирование запросов и ответов для отладки
@@ -119,30 +122,50 @@ val dataModule = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     }
 
 
     single<CatalogDataSource> {
-        CatalogDataSourceImpl( get() )
+        CatalogDataSourceImpl(get())
     }
 
     single<ProductActionsDataSource> {
-        ProductActionsDataSourceImpl( get() )
+        ProductActionsDataSourceImpl(get())
     }
 
     single<ProductsDataSource> {
-        ProductsDataSourceImpl( get() )
+        ProductsDataSourceImpl(get())
     }
 
     single<ProfileActionsDataSource> {
-        ProfileActionsDataSourceImpl( get() )
+        ProfileActionsDataSourceImpl(get())
+    }
+
+    single<AuthDataSource> {
+        AuthDataSourceImpl( get() )
     }
 }
 
+class TokenExpiredException(message: String) : Exception(message)
 
 
+object NavigationStateHolder {
+    val navigationState = MutableStateFlow<NavigationState>(NavigationState.None)
+}
 
+sealed class NavigationState {
+    data object None : NavigationState()
+    data object Normal : NavigationState()
+    data object TokenExpired : NavigationState()
+    data class Error(val message: String) : NavigationState()
+}
 
-
+@Serializable
+data class ErrorResponse(
+    val message: List<String>?,
+    val error: String,
+    val statusCode: Int
+)

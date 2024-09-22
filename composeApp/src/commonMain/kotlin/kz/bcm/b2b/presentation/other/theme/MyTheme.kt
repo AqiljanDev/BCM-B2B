@@ -36,8 +36,8 @@ private val DarkColorPalette = darkColors(
 
     onPrimary = Color.Black, // Black
     onSecondary = Color.Black, // Black
-    onBackground = Color.White, // White
-    onSurface = Color.White, // White
+    onBackground = Color.Green, // White
+    onSurface = Color.DarkGray, // White
     onError = Color.Black // Black
 )
 

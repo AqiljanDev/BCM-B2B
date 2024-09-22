@@ -1,5 +1,8 @@
 package kz.bcm.b2b.data.repository
 
+import kz.bcm.b2b.domain.data.auth.AccessToken
+import kz.bcm.b2b.domain.data.auth.login.PostLogin
+import kz.bcm.b2b.domain.data.auth.register.PostRegistration
 import kz.bcm.b2b.domain.data.bill.BillBody
 import kz.bcm.b2b.domain.data.bill.BillMy
 import kz.bcm.b2b.domain.data.cabinet.Cabinet
@@ -17,6 +20,7 @@ import kz.bcm.b2b.domain.data.order.orders.PostOrders
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.domain.data.wishlistAndCompare.wishlist.WishListFull
 import kz.bcm.b2b.domain.repository.Repository
+import kz.bcm.b2b.domain.repository.datasource.AuthDataSource
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductActionsDataSource
 import kz.bcm.b2b.domain.repository.datasource.ProductsDataSource
@@ -26,7 +30,8 @@ class RepositoryImpl(
     private val catalogDataSource: CatalogDataSource,
     private val productsDataSource: ProductsDataSource,
     private val productActionsDataSource: ProductActionsDataSource,
-    private val profileActionsDataSource: ProfileActionsDataSource
+    private val profileActionsDataSource: ProfileActionsDataSource,
+    private val authDataSource: AuthDataSource
 ) : Repository {
 
     override suspend fun findOne(
@@ -143,6 +148,14 @@ class RepositoryImpl(
 
     override suspend fun updateCabinet(cabinet: Cabinet): Cabinet {
         return profileActionsDataSource.updateCabinet(cabinet)
+    }
+
+    override suspend fun login(body: PostLogin): AccessToken {
+        return authDataSource.login(body)
+    }
+
+    override suspend fun registration(body: PostRegistration): AccessToken {
+        return authDataSource.registration(body)
     }
 
 
