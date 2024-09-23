@@ -3,11 +3,21 @@ package kz.bcm.b2b.data.datasource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.appendPathSegments
+import kotlinx.serialization.SerializationException
 import kz.bcm.b2b.data.dto.collectCharacters.CollectCharactersDto
 import kz.bcm.b2b.data.dto.findOneCatalog.CatalogDto
+import kz.bcm.b2b.data.dto.findOneCatalog.ProductDto
+import kz.bcm.b2b.di.ErrorResponse
 import kz.bcm.b2b.domain.data.collectCharacters.CollectCharacters
 import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
+import kz.bcm.b2b.domain.data.findOneCatalog.Product
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
+import kz.bcm.b2b.presentation.other.ApiResponse
+import kz.bcm.b2b.presentation.other.safeRequest
 
 class CatalogDataSourceImpl(
     private val httpClient: HttpClient
@@ -24,18 +34,24 @@ class CatalogDataSourceImpl(
     ): Catalog {
         println("CatalogSource -> findOne = category: $category, page: $page")
 
-        val url = buildString {
-            append("catalog/$category?page=$page")
+        val req = httpClient.safeRequest<CatalogDto, ErrorResponse> {
+            method = HttpMethod.Get
 
-            min?.let { append("&min=$it") }
-            max?.let { append("&max=$it") }
-            if (sort.isNotEmpty()) append("&sort=$sort")
-            if (f.isNotEmpty()) append("&f=$f")
+            url {
+                appendPathSegments("catalog/$category")
+                parameters.apply {
+                    append("page", page.toString())
+                    min?.let { append("min", it.toString()) }
+                    max?.let { append("max", it.toString()) }
+                    if (sort.isNotEmpty()) append("sort", sort)
+                    if (f.isNotEmpty()) append("f", f)
+                }
+            }
         }
 
-        val response: CatalogDto = httpClient.get(url).body()
+        if (req is ApiResponse.Success) return req.body
 
-        return response
+        return CatalogDto()
     }
 
     override suspend fun collectCharacters(
@@ -44,26 +60,39 @@ class CatalogDataSourceImpl(
         f: String
     ): CollectCharacters {
 
-        val url = buildString {
-            append("catalog/char/$category")
+        val entry = httpClient.safeRequest<CollectCharactersDto, ErrorResponse> {
+            method = HttpMethod.Get
 
-            var isFirstParam = true // Флаг для отслеживания первого параметра
+            url {
+                appendPathSegments("catalog/char/$category")
 
-            min?.let {
-                append(if (isFirstParam) "?" else "&")
-                append("min=$min")
-                isFirstParam = false
-            }
-
-            if (f.isNotEmpty()) {
-                append(if (isFirstParam) "?" else "&")
-                append("f=$f")
+                parameters.apply {
+                    min?.let { append("min", it.toString()) }
+                    if (f.isNotEmpty()) append("f", f)
+                }
             }
         }
 
-        val response: CollectCharactersDto = httpClient.get(url).body()
+        if (entry is ApiResponse.Success) return entry.body
 
-        return response
+
+        return CollectCharactersDto()
+    }
+
+
+    override suspend fun search(value: String): List<Product> {
+        val body = httpClient.safeRequest<List<ProductDto>, ErrorResponse> {
+            method = HttpMethod.Get
+
+            url {
+                appendPathSegments("search")
+                parameters.append("s", value)
+            }
+        }
+
+        if (body is ApiResponse.Success) return body.body
+
+        return listOf()
     }
 
 

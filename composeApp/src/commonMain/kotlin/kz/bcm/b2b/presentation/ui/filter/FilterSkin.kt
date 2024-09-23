@@ -1,6 +1,7 @@
 package kz.bcm.b2b.presentation.ui.filter
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -83,9 +84,16 @@ fun FilterSkin(navController: NavController) {
                 }
             )
         },
-        drawerContent = { DrawerContent(navController) }
+        drawerContent = { DrawerContent(navController) },
+        bottomBar = { BottomNavigationBar(navController) }
     ) { paddingValues ->
 
-        FilterScreen(navController)
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .padding(PaddingValues(bottom = paddingValues.calculateBottomPadding()))
+        ) {
+
+            FilterScreen(navController)
+        }
     }
 }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import bcm_b2b.composeapp.generated.resources.Res
-import bcm_b2b.composeapp.generated.resources.ic_cart
 import bcm_b2b.composeapp.generated.resources.ic_catalog
 import bcm_b2b.composeapp.generated.resources.ic_contact
 import bcm_b2b.composeapp.generated.resources.ic_delivery
@@ -38,7 +36,6 @@ import kz.bcm.b2b.di.NavigationStateHolder
 import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.other.theme.ColorDarkRed
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
-import kz.bcm.b2b.presentation.other.theme.ColorMainOrange
 import kz.bcm.b2b.sharedPref.URL
 import kz.bcm.b2b.sharedPref.putStringSharedPref
 import kz.bcm.b2b.sharedPref.removeStringSharedPref
@@ -52,7 +49,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun DrawerContent(navController: NavController) {
 
-    val cs = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier.fillMaxWidth().padding(12.dp),
@@ -113,8 +110,10 @@ fun DrawerContent(navController: NavController) {
                 resource = Res.drawable.ic_logout,
                 title = "Выход",
                 clickOn = {
-                    cs.launch {
-                        removeStringSharedPref(URL.TOKEN.key)
+                    coroutineScope.launch {
+//                        removeStringSharedPref(URL.TOKEN.key)
+                        putStringSharedPref(URL.TOKEN.key, "")
+
                         NavigationStateHolder.navigationState.emit(NavigationState.None)
                     }
                 },

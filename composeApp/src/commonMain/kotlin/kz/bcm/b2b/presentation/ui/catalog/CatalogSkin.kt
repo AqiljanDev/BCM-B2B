@@ -28,6 +28,7 @@ import bcm_b2b.composeapp.generated.resources.logo_horizontal
 import kotlinx.coroutines.launch
 import kz.bcm.b2b.di.NavigationState
 import kz.bcm.b2b.di.NavigationStateHolder
+import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.ui.main.BottomNavigationBar
 import kz.bcm.b2b.presentation.ui.main.DrawerContent
 import kz.bcm.b2b.presentation.ui.main.NavGraph
@@ -75,7 +76,7 @@ fun CatalogSkin(navController: NavController, slug: String? = null) {
                 actions = {
                     IconButton(
                         onClick = {
-                            println("Search click")
+                            navController.navigate(Route.SEARCH.route)
                         },
                     ) {
                         Icon(

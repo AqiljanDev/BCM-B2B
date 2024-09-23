@@ -1,5 +1,6 @@
 package kz.bcm.b2b.di
 
+import AuthDataSourceImpl
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -19,9 +20,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kz.bcm.b2b.data.datasource.AuthDataSourceImpl
 import kz.bcm.b2b.data.datasource.CatalogDataSourceImpl
 import kz.bcm.b2b.data.datasource.ProductActionsDataSourceImpl
 import kz.bcm.b2b.data.datasource.ProductsDataSourceImpl
@@ -69,47 +70,6 @@ val dataModule = module {
                 header(HttpHeaders.Authorization, "Bearer $token")
             }
 
-            // Обработка ошибок с помощью HttpResponseValidator
-            HttpResponseValidator {
-                validateResponse { response ->
-                    if (response.status.value >= 300) {
-
-                        NavigationStateHolder.navigationState.emit(NavigationState.TokenExpired)
-                        println("Ошибка status >= 300: $response")
-                    } else {
-
-                        NavigationStateHolder.navigationState.emit(NavigationState.TokenExpired)
-                        println("Unknow error: $response")
-                    }
-                }
-
-//                handleResponseException { cause ->
-//                    when (cause) {
-//                        is ResponseException -> {
-//                            val responseBody = cause.response.bodyAsText()  // Получаем текст тела ответа
-//
-//                            // Пытаемся распарсить JSON
-//                            try {
-//                                val errorResponse = Json.decodeFromString<ErrorResponse>(responseBody)
-//
-//                                // Получаем сообщение из errorResponse
-//                                errorResponse.message?.let { messages ->
-//                                    println("Messages: $messages")
-//                                } ?: run {
-//                                    println("Error: ${errorResponse.error}, StatusCode: ${errorResponse.statusCode}")
-//                                }
-//                            } catch (e: Exception) {
-//                                println("Error parsing response: ${e.message}")
-//                            }
-//                        }
-//                        else -> {
-//                            // Общая обработка ошибок
-//                            println("Exception: ${cause.message}")
-//                        }
-//                    }
-//                }
-            }
-
             // Логгирование запросов и ответов для отладки
             install(Logging) {
                 level = LogLevel.BODY
@@ -149,8 +109,6 @@ val dataModule = module {
     }
 }
 
-class TokenExpiredException(message: String) : Exception(message)
-
 
 object NavigationStateHolder {
     val navigationState = MutableStateFlow<NavigationState>(NavigationState.None)
@@ -163,9 +121,21 @@ sealed class NavigationState {
     data class Error(val message: String) : NavigationState()
 }
 
+
 @Serializable
 data class ErrorResponse(
-    val message: List<String>?,
-    val error: String,
-    val statusCode: Int
+    val status: String = "",
+    @SerialName("message")
+    val message: String? = null,
+    val error: String = "",
+    val statusCode: Int = 0
+)
+
+@Serializable
+data class ErrorResponseListM(
+    val status: String = "",
+    @SerialName("message")
+    val message: List<String> = listOf(),
+    val error: String = "",
+    val statusCode: Int = 0
 )

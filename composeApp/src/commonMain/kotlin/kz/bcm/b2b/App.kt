@@ -16,8 +16,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     val navController = rememberNavController()
-
-   val navigationState by NavigationStateHolder.navigationState.collectAsState()
+    val navigationState by NavigationStateHolder.navigationState.collectAsState()
 
     LaunchedEffect(navigationState) {
         println("LaunchedEffect nav state")
@@ -27,7 +26,10 @@ fun App() {
             is NavigationState.Normal -> {
                 println("NavigationState when: is normal expired")
                 navController.navigate(Route.CATALOG.route) {
-                    popUpTo(Route.SPLASH.route) { inclusive = true }
+                    popUpTo(Route.SPLASH.route) {
+                        inclusive = true
+                        saveState = false
+                    }
                     launchSingleTop = true
                 }
             }
@@ -35,7 +37,10 @@ fun App() {
             is NavigationState.TokenExpired -> {
                 println("NavigationState when: is token expired")
                 navController.navigate(Route.LOGIN.route) {
-                    popUpTo(Route.SPLASH.route) { inclusive = true }
+                    popUpTo(Route.SPLASH.route) {
+                        inclusive = true
+                        saveState = false
+                    }
                     launchSingleTop = true
                 }
             }

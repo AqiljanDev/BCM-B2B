@@ -14,6 +14,7 @@ import kz.bcm.b2b.domain.data.collectCharacters.CollectCharacters
 import kz.bcm.b2b.domain.data.compare.CompareFull
 import kz.bcm.b2b.domain.data.order.findMyOrder.MyOrder
 import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
+import kz.bcm.b2b.domain.data.findOneCatalog.Product
 import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
 import kz.bcm.b2b.domain.data.order.findOne.FindOneOrderUser
@@ -38,6 +39,12 @@ interface Repository {
         min: Int?,
         f: String
     ): CollectCharacters
+
+    suspend fun search(
+        value: String
+    ): List<Product>
+
+
 
 
     suspend fun findOneProduct(slug: String): FindOneProduct

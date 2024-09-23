@@ -71,13 +71,9 @@ fun LoginScreen(navController: NavController) {
         mutableStateOf<String?>("Пароль не верный")
     }
 
-    var stateLoading by remember {
-        mutableStateOf(false)
-    }
 
     when (state.value) {
         is State.Loading -> {
-            stateLoading = true
             stateError = null
         }
 
@@ -87,7 +83,6 @@ fun LoginScreen(navController: NavController) {
                 value = (state.value as State.Success<String>).data
             )
 
-            stateLoading = false
             stateError = null
 
             coroutine.launch {
@@ -96,7 +91,6 @@ fun LoginScreen(navController: NavController) {
         }
 
         is State.Error -> {
-            stateLoading = false
 
             stateError = (state.value as State.Error).message
         }

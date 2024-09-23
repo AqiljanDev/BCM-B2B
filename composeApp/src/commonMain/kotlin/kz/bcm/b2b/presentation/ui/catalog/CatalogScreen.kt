@@ -74,14 +74,14 @@ fun CatalogScreen(navController: NavController, slug: String? = null) {
     }
 
     LaunchedEffect(stateCatalog) {
-        viewModel.initializeData()
+//        viewModel.initializeData()
 
-        println("initializeData in Catalog screen")
+        println("initializeData in Catalog screen = ${stateCatalog.value}")
     }
 
     LaunchedEffect(Unit, currentCategory) {
 
-        viewModel.getPage(category = currentCategory)
+//        viewModel.getPage(category = currentCategory)
     }
 
     LazyColumn(
@@ -102,7 +102,7 @@ fun CatalogScreen(navController: NavController, slug: String? = null) {
 
         item {
             TitleAndFilter(stateCatalog.value.info.title) {
-                println("Click filter")
+                navController.navigate(Route.FILTER.route)
             }
         }
 

@@ -15,9 +15,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,17 +35,29 @@ import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.inter_bold
 import bcm_b2b.composeapp.generated.resources.inter_medium
 import bcm_b2b.composeapp.generated.resources.inter_regular
+import kotlinx.coroutines.launch
 import kz.bcm.b2b.data.dto.auth.register.PostRegistrationDto
+import kz.bcm.b2b.di.NavigationState
+import kz.bcm.b2b.di.NavigationStateHolder
 import kz.bcm.b2b.presentation.other.data.Route
+import kz.bcm.b2b.presentation.other.data.State
 import kz.bcm.b2b.presentation.other.theme.ColorDarkRed
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.ColorWhiteSmoke
 import kz.bcm.b2b.presentation.ui.cart.DropDownMain
+import kz.bcm.b2b.presentation.viewmodel.RegistrationViewModel
+import kz.bcm.b2b.sharedPref.URL
+import kz.bcm.b2b.sharedPref.putStringSharedPref
 import org.jetbrains.compose.resources.Font
+import org.koin.compose.koinInject
 
 
 @Composable
 fun RegistrationScreen(navController: NavController) {
+    val viewModel: RegistrationViewModel = koinInject()
+    val state = viewModel.state.collectAsState()
+    val coroutine = rememberCoroutineScope()
+
     val listTypeCompany = listOf("ТОО", "ИП", "АО")
     val scroll = rememberScrollState()
 
@@ -52,12 +66,38 @@ fun RegistrationScreen(navController: NavController) {
     }
 
     var stateError by remember {
-        mutableStateOf("email must be an email")
+        mutableStateOf<String?>("email must be an email")
     }
 
     val selectTypeItem = remember {
         mutableStateOf(listTypeCompany[0])
     }
+
+
+
+
+    when (state.value) {
+        is State.Loading -> {
+            stateError = null
+        }
+
+        is State.Success -> {
+            putStringSharedPref(
+                key = URL.TOKEN.key,
+                value = (state.value as State.Success<String>).data
+            )
+            navController.navigate(Route.BEING_TESTED.route)
+
+            stateError = null
+        }
+
+        is State.Error -> {
+
+            stateError = (state.value as State.Error).message
+        }
+    }
+
+
 
 
     Column(
@@ -226,16 +266,18 @@ fun RegistrationScreen(navController: NavController) {
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ) {
-                        navController.navigate(Route.BEING_TESTED.route)
+                        viewModel.registration(stateRegistration)
                     }
             )
 
-            Text(
-                text = stateError,
-                fontSize = 11.sp,
-                fontFamily = FontFamily(Font(Res.font.inter_medium)),
-                color = ColorDarkRed
-            )
+            stateError?.let {
+                Text(
+                    text = it,
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily(Font(Res.font.inter_medium)),
+                    color = ColorDarkRed
+                )
+            }
         }
     }
 }

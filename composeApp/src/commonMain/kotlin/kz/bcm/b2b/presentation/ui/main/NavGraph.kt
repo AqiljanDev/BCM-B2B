@@ -33,7 +33,7 @@ fun NavGraph(
     KoinContext {
         NavHost(
             navController = navController,
-            startDestination = Route.CATALOG.route
+            startDestination = Route.SPLASH.route
         ) {
 
             // Bottom Menu

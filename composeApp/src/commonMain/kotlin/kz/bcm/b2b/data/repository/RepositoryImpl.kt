@@ -13,6 +13,7 @@ import kz.bcm.b2b.domain.data.collectCharacters.CollectCharacters
 import kz.bcm.b2b.domain.data.compare.CompareFull
 import kz.bcm.b2b.domain.data.order.findMyOrder.MyOrder
 import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
+import kz.bcm.b2b.domain.data.findOneCatalog.Product
 import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
 import kz.bcm.b2b.domain.data.order.orders.OrderDetails
@@ -52,6 +53,11 @@ class RepositoryImpl(
     ): CollectCharacters {
         return catalogDataSource.collectCharacters(category, min, f)
     }
+
+    override suspend fun search(value: String): List<Product> {
+        return catalogDataSource.search(value)
+    }
+
 
 
     override suspend fun findOneProduct(slug: String): FindOneProduct {

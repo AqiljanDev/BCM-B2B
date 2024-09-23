@@ -8,7 +8,10 @@ import kz.bcm.b2b.presentation.viewmodel.CompareViewModel
 import kz.bcm.b2b.presentation.viewmodel.FavoriteViewModel
 import kz.bcm.b2b.presentation.viewmodel.ProfileViewModel
 import kz.bcm.b2b.presentation.ui.splash.SplashViewModel
+import kz.bcm.b2b.presentation.viewmodel.FilterViewModel
 import kz.bcm.b2b.presentation.viewmodel.LoginViewModel
+import kz.bcm.b2b.presentation.viewmodel.RegistrationViewModel
+import kz.bcm.b2b.presentation.viewmodel.SearchViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -76,6 +79,31 @@ val viewModelModule = module {
     single {
         LoginViewModel(
             get()
+        )
+    }
+    single {
+        RegistrationViewModel(
+            get()
+        )
+    }
+
+    single {
+        SearchViewModel(
+            get(), get(),
+            get(), get(),
+            get(), get(),
+            get(), get(),
+            get()
+        )
+    }
+
+    single {
+        FilterViewModel(
+            get(), get(),
+            get(), get(),
+            get(), get(),
+            get(), get(),
+            get(),
         )
     }
 }
