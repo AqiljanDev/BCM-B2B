@@ -43,7 +43,7 @@ val dataModule = module {
         HttpClient(CIO) {
             // Установка базового URL
             defaultRequest {
-                url("http://192.168.8.123:4040/api/") // базовый URL
+                url("http://89.46.33.116:4040/api/") // базовый URL
             }
 
             // Установка тайм-аутов

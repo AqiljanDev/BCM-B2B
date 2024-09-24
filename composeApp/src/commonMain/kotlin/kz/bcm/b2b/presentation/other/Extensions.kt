@@ -11,6 +11,18 @@ import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.SerializationException
 
 
+fun <T> List<T>.toggleItem(item: T): List<T> {
+    val newList = this.toMutableList()
+    if (this.contains(item)) {
+        newList.remove(item)
+    } else {
+        newList.add(item)
+    }
+
+    return newList.toList()
+}
+
+
 suspend inline fun <reified T, reified E> HttpClient.safeRequest(
     block: HttpRequestBuilder.() -> Unit,
 ): ApiResponse<T, E> =

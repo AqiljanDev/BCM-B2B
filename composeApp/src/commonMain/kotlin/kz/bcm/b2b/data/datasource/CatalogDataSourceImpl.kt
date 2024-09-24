@@ -59,6 +59,7 @@ class CatalogDataSourceImpl(
         min: Int?,
         f: String
     ): CollectCharacters {
+        println("collectCharacters = category: $category, min: $min, f: $f")
 
         val entry = httpClient.safeRequest<CollectCharactersDto, ErrorResponse> {
             method = HttpMethod.Get
@@ -73,10 +74,17 @@ class CatalogDataSourceImpl(
             }
         }
 
-        if (entry is ApiResponse.Success) return entry.body
+        println("collectCharacters entry = ${entry is ApiResponse.Success}")
 
+        return if (entry is ApiResponse.Success) {
 
-        return CollectCharactersDto()
+            println("Entry = ${entry.body}")
+
+            entry.body
+        } else {
+            println("Entry = else -- if is else")
+            CollectCharactersDto()
+        }
     }
 
 

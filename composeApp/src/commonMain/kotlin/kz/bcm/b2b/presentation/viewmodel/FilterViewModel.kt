@@ -70,6 +70,7 @@ class FilterViewModel(
     ) {
         viewModelScope.launch {
             val res = getCollectCharactersUseCase.execute(category, min, f)
+            println("get coll character = $res")
 
             _character.emit(res)
         }
