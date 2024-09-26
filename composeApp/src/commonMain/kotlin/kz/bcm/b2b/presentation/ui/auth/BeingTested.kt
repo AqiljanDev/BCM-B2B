@@ -56,6 +56,7 @@ fun BeingTested(navController: NavController) {
             color = Color.White,
             modifier = Modifier.clip(RoundedCornerShape(12.dp))
                 .background(ColorMainGreen)
+                .clickable {  }
                 .padding(horizontal = 16.dp, vertical = 10.dp)
         )
 
@@ -70,7 +71,7 @@ fun BeingTested(navController: NavController) {
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                navController.popBackStack(Route.LOGIN.route, inclusive = true)
+                navController.popBackStack(Route.LOGIN.route, inclusive = false)
             }
         )
 

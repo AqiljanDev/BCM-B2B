@@ -1,5 +1,6 @@
 package kz.bcm.b2b.presentation.viewmodel
 
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,11 +9,13 @@ import kotlinx.coroutines.launch
 import kz.bcm.b2b.data.dto.cart.full.CartFullProductDto
 import kz.bcm.b2b.data.dto.cart.mini.GetCartMiniDto
 import kz.bcm.b2b.data.dto.cart.mini.ProductDto
+import kz.bcm.b2b.data.dto.order.orders.OrderDetailsDto
 import kz.bcm.b2b.domain.data.bill.BillMy
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.full.CartFullProduct
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
 import kz.bcm.b2b.domain.data.findOneCatalog.Product
+import kz.bcm.b2b.domain.data.order.orders.OrderDetails
 import kz.bcm.b2b.domain.data.order.orders.PostOrders
 import kz.bcm.b2b.domain.usecase.DeleteCartUseCase
 import kz.bcm.b2b.domain.usecase.EventCartUseCase
@@ -36,6 +39,9 @@ class CartViewModel(
 
     private val _billMy: MutableStateFlow<List<BillMy>> = MutableStateFlow(listOf())
     val billMy get() = _billMy.asStateFlow()
+
+    private val _orderDetails = MutableStateFlow<OrderDetails>(OrderDetailsDto())
+    val orderDetails get() = _orderDetails.asStateFlow()
 
     fun getCartFull() {
         viewModelScope.launch {
@@ -89,7 +95,8 @@ class CartViewModel(
         viewModelScope.launch {
             println("post orders = $postOrder")
 
-            postOrdersUseCase.execute(postOrder)
+            val res = postOrdersUseCase.execute(postOrder)
+            _orderDetails.emit(res)
 
             getCartFull()
             getBillMy()

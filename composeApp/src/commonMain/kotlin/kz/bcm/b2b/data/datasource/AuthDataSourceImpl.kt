@@ -12,6 +12,7 @@ import kz.bcm.b2b.di.ErrorResponse
 import kz.bcm.b2b.di.ErrorResponseListM
 import kz.bcm.b2b.domain.data.auth.AccessToken
 import kz.bcm.b2b.domain.data.auth.login.PostLogin
+import kz.bcm.b2b.domain.data.auth.passwordCodeSend.PasswordSend
 import kz.bcm.b2b.domain.data.auth.register.PostRegistration
 import kz.bcm.b2b.domain.repository.datasource.AuthDataSource
 import kz.bcm.b2b.presentation.other.ApiResponse
@@ -43,7 +44,7 @@ class AuthDataSourceImpl(
                 } catch (serializationException: SerializationException) {
                     // If deserialization fails, handle the error gracefully
                     val err = Json.decodeFromString<ErrorResponseListM>(errorBody)
-                    throw Exception(err.message.joinToString( ", "))
+                    throw Exception(err.message.joinToString(", "))
                 }
             }
         } catch (e: Exception) {
@@ -74,12 +75,34 @@ class AuthDataSourceImpl(
                 } catch (serializationException: SerializationException) {
                     // If deserialization fails, handle the error gracefully
                     val err = Json.decodeFromString<ErrorResponseListM>(errorBody)
-                    throw Exception(err.message.joinToString( ", "))
+                    throw Exception(err.message.joinToString(", "))
                 }
             }
         } catch (e: Exception) {
             println("Exc === ${e.message}")
             throw Exception(e.message)
+        }
+    }
+
+
+    override suspend fun passwordCodeSend(passwordSend: PasswordSend) {
+        try {
+            val entry = httpClient.post("auth/password/code/send") {
+                setBody(passwordSend)
+            }
+
+            if (entry.status.value !in 201..299) {
+                val errorBody = entry.bodyAsText()
+                println("Error Response: $errorBody")
+
+                val errorResponse = Json.decodeFromString<ErrorResponse>(errorBody)
+                throw Exception(errorResponse.message)
+            }
+
+        } catch (e: Exception) {
+            // Обработка исключений
+            println("Error sending password code: ${e.message}")
+            throw e // Пробрасываем исключение для дальнейшей обработки
         }
     }
 

@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -135,7 +136,8 @@ fun LoginScreen(navController: NavController) {
                 value = stateLogin.password,
                 setValue = { stateLogin = stateLogin.copy(password = it) },
                 keyboardType = KeyboardType.Password,
-                icon = Icons.Filled.Lock
+                icon = Icons.Filled.Lock,
+                imeAction = ImeAction.Go
             )
 
             Text(

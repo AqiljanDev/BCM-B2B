@@ -59,6 +59,7 @@ import bcm_b2b.composeapp.generated.resources.oswald_regular
 import kz.bcm.b2b.data.dto.cart.event.PostCartDto
 import kz.bcm.b2b.presentation.other.theme.ColorDarkRed
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
+import kz.bcm.b2b.presentation.ui.catalog.formatPrice
 import kz.bcm.b2b.presentation.ui.catalog.getIdFromCartMini
 
 
@@ -142,7 +143,7 @@ fun ProductItemInCart(
             }
 
             Text(
-                text = "${product.price} ₸",
+                text = "${formatPrice(product.price)} ₸",
                 fontSize = 12.sp,
                 fontFamily = FontFamily(Font(Res.font.oswald_regular)),
                 color = Color.Gray
@@ -157,7 +158,7 @@ fun ProductItemInCart(
             ) {
 
                 Text(
-                    text = "Наличие:\n${product.count} шт",
+                    text = "Наличие:\n${formatPrice(product.count)} шт",
                     fontSize = 11.sp,
                     fontFamily = FontFamily(Font(Res.font.inter_regular)),
                     color = Color.Gray,
@@ -243,7 +244,7 @@ fun ProductItemInCart(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "${product.price} ₸",
+                    text = "${formatPrice(product.price)} ₸",
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(Res.font.oswald_medium))
                 )

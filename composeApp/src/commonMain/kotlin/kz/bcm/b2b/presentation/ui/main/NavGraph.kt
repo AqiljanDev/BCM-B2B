@@ -15,11 +15,12 @@ import kz.bcm.b2b.presentation.ui.catalog.CatalogSkin
 import kz.bcm.b2b.presentation.ui.compare.CompareSkin
 import kz.bcm.b2b.presentation.ui.favorite.FavoriteSkin
 import kz.bcm.b2b.presentation.ui.filter.FilterSkin
-import kz.bcm.b2b.presentation.ui.navigationMenu.CatalogListSkin
-import kz.bcm.b2b.presentation.ui.navigationMenu.ContactSkin
-import kz.bcm.b2b.presentation.ui.navigationMenu.DeliveryPaymentSkin
-import kz.bcm.b2b.presentation.ui.navigationMenu.PromotionSkin
-import kz.bcm.b2b.presentation.ui.navigationMenu.ServiceCenter
+import kz.bcm.b2b.presentation.ui.filterFull.FilterFullSkin
+import kz.bcm.b2b.presentation.ui.navigationMenu.catalogList.CatalogListSkin
+import kz.bcm.b2b.presentation.ui.navigationMenu.contact.ContactSkin
+import kz.bcm.b2b.presentation.ui.navigationMenu.delivery.DeliveryPaymentSkin
+import kz.bcm.b2b.presentation.ui.navigationMenu.promotion.PromotionSkin
+import kz.bcm.b2b.presentation.ui.navigationMenu.service.ServiceCenterSkin
 import kz.bcm.b2b.presentation.ui.profile.ProfileSkin
 import kz.bcm.b2b.presentation.ui.search.SearchSkin
 import kz.bcm.b2b.presentation.ui.splash.SplashScreen
@@ -67,24 +68,30 @@ fun NavGraph(
 
 
             // Navigation Menu
+            composable("${Route.CATALOG_LIST.route}/{slug}") { backStackEntry ->
+                val slug = backStackEntry.arguments?.getString("slug")
+
+                CatalogListSkin(navController, slug)
+            }
+
             composable(Route.CATALOG_LIST.route) {
-                CatalogListSkin(navController)
+                CatalogListSkin(navController, null)
             }
 
             composable(Route.PROMOTION.route) {
-                PromotionSkin()
+                PromotionSkin(navController)
             }
 
             composable(Route.DELIVERY_PAYMENT.route) {
-                DeliveryPaymentSkin()
+                DeliveryPaymentSkin(navController)
             }
 
             composable(Route.CONTACTS.route) {
-                ContactSkin()
+                ContactSkin(navController)
             }
 
             composable(Route.SERVICE_CENTER.route) {
-                ServiceCenter()
+                ServiceCenterSkin(navController)
             }
 
 
@@ -103,6 +110,23 @@ fun NavGraph(
 
             composable(Route.FILTER.route) {
                 FilterSkin(navController)
+            }
+
+            composable("${Route.FILTER_FULL.route}/{category}/{slug}/{sort}/{f}") { backStackEntry ->
+                val category: String = backStackEntry.arguments?.getString("category") ?: "Каталог"
+                val slug: String = backStackEntry.arguments?.getString("slug") ?: "index"
+                val sort: String = backStackEntry.arguments?.getString("sort") ?: "new"
+                val f: String = backStackEntry.arguments?.getString("f").orEmpty()
+
+                println("active full filter = category: $category, slug: $slug, sort: $sort, f: $f")
+
+                FilterFullSkin(
+                    navController = navController,
+                    category = category,
+                    slug = slug,
+                    sort = sort,
+                    f = f
+                )
             }
 
             composable(Route.SPLASH.route) {

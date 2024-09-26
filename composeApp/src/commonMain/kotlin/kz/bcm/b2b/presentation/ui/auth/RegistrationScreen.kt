@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,13 +67,17 @@ fun RegistrationScreen(navController: NavController) {
     }
 
     var stateError by remember {
-        mutableStateOf<String?>("email must be an email")
+        mutableStateOf<String?>(null)
     }
 
     val selectTypeItem = remember {
         mutableStateOf(listTypeCompany[0])
     }
 
+
+    LaunchedEffect(selectTypeItem.value) {
+        stateRegistration = stateRegistration.copy(type = selectTypeItem.value)
+    }
 
 
 
@@ -94,6 +99,8 @@ fun RegistrationScreen(navController: NavController) {
         is State.Error -> {
 
             stateError = (state.value as State.Error).message
+
+            println("State error = $stateError === ${(state.value as State.Error).message}")
         }
     }
 

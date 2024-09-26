@@ -61,6 +61,7 @@ import kz.bcm.b2b.presentation.other.data.ProductBasketCreate
 import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.other.theme.ColorGreyDavy
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
+import kz.bcm.b2b.presentation.ui.catalog.formatPrice
 import kz.bcm.b2b.presentation.viewmodel.CartViewModel
 import org.jetbrains.compose.resources.Font
 import org.koin.compose.koinInject
@@ -74,10 +75,19 @@ fun CartScreen(navController: NavController) {
     val stateProduct = viewModel.cartProduct.collectAsState()
     val stateCartMini = viewModel.cartMini.collectAsState()
     val stateBillMy = viewModel.billMy.collectAsState()
+    val stateOrderDetails = viewModel.orderDetails.collectAsState()
+
+    var stateTitle by remember {
+        mutableStateOf("Ваша корзина пуста")
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getCartFull()
         viewModel.getBillMy()
+    }
+
+    LaunchedEffect(stateOrderDetails.value) {
+        if (stateOrderDetails.value.id != 0) stateTitle = "Заказ #${stateOrderDetails.value.id} успешно оформлен!"
     }
 
     Box(
@@ -141,13 +151,15 @@ fun CartScreen(navController: NavController) {
                     product = stateProduct.value,
                     totalPrice = stateProduct.value.sumOf { it.count * it.product.price },
                     stateBillMy.value
-                ) { order -> viewModel.postOrders(postOrder = order) }
+                ) { order ->
+                    viewModel.postOrders(postOrder = order)
+                }
             }
 
         } else {
 
             Text(
-                text = "Ваша корзина пуста",
+                text = stateTitle,
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(Res.font.inter_regular))
             )
@@ -212,7 +224,7 @@ private fun FormFieldsCard(
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = "Итого:    $totalPrice ₸",
+                    text = "Итого:    ${formatPrice(totalPrice)} ₸",
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(Res.font.oswald_medium))
                 )

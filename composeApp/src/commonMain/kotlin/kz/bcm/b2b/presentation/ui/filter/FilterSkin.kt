@@ -25,6 +25,7 @@ import bcm_b2b.composeapp.generated.resources.ic_menu_burger
 import bcm_b2b.composeapp.generated.resources.ic_search
 import bcm_b2b.composeapp.generated.resources.logo_horizontal
 import kotlinx.coroutines.launch
+import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.ui.catalog.CatalogScreen
 import kz.bcm.b2b.presentation.ui.main.BottomNavigationBar
 import kz.bcm.b2b.presentation.ui.main.DrawerContent
@@ -72,7 +73,7 @@ fun FilterSkin(navController: NavController) {
                 actions = {
                     IconButton(
                         onClick = {
-                            println("Search click")
+                            navController.navigate(Route.SEARCH.route)
                         },
                     ) {
                         Icon(

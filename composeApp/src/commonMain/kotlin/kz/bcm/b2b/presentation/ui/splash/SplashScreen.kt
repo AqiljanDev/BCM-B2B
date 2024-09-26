@@ -30,14 +30,15 @@ fun SplashScreen() {
 
     Box(
         modifier = Modifier.fillMaxSize()
-            .background(Color.Cyan),
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
 
         Icon(
             painter = painterResource(Res.drawable.ic_logo),
             contentDescription = "logotype",
-            modifier = Modifier.size(35.dp)
+            modifier = Modifier.size(150.dp),
+            tint = Color.Unspecified
         )
     }
 }

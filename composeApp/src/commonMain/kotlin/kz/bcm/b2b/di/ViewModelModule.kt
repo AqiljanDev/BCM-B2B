@@ -8,9 +8,12 @@ import kz.bcm.b2b.presentation.viewmodel.CompareViewModel
 import kz.bcm.b2b.presentation.viewmodel.FavoriteViewModel
 import kz.bcm.b2b.presentation.viewmodel.ProfileViewModel
 import kz.bcm.b2b.presentation.ui.splash.SplashViewModel
+import kz.bcm.b2b.presentation.viewmodel.CatalogListViewModel
+import kz.bcm.b2b.presentation.viewmodel.FilterFullViewModel
 import kz.bcm.b2b.presentation.viewmodel.FilterViewModel
 import kz.bcm.b2b.presentation.viewmodel.LoginViewModel
 import kz.bcm.b2b.presentation.viewmodel.RegistrationViewModel
+import kz.bcm.b2b.presentation.viewmodel.RestoreCodeViewModel
 import kz.bcm.b2b.presentation.viewmodel.SearchViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
@@ -86,6 +89,11 @@ val viewModelModule = module {
             get()
         )
     }
+    single {
+        RestoreCodeViewModel(
+            get()
+        )
+    }
 
     single {
         SearchViewModel(
@@ -106,4 +114,17 @@ val viewModelModule = module {
             get(),
         )
     }
+
+    single {
+        FilterFullViewModel(
+            get(), get()
+        )
+    }
+
+    single {
+        CatalogListViewModel(
+            get()
+        )
+    }
+
 }

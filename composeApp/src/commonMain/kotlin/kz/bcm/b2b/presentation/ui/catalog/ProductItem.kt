@@ -1,5 +1,9 @@
 package kz.bcm.b2b.presentation.ui.catalog
 
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -101,6 +106,34 @@ fun ProductItem(
         stateFavorite = favoriteList.any { it.prodId == product.id1c }
     }
 
+
+    var isAnimating by remember { mutableStateOf(false) }
+    var isAnimatingBounce by remember { mutableStateOf(false) }
+    // Анимация масштаба
+    val animatedScale by animateFloatAsState(
+        targetValue = if (isAnimating) 1.3f else 1f,
+        animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
+        finishedListener = {
+
+            if (isAnimating) {
+                isAnimating = false
+            }
+
+        }
+    )
+
+    val bounceScale by animateFloatAsState(
+        targetValue = if (isAnimatingBounce) 1.3f else 1f,
+        animationSpec = tween(
+            durationMillis = 400,
+            easing = {
+                FastOutLinearInEasing.transform(it)
+            }
+        ),
+        finishedListener = { isAnimatingBounce = false }
+    )
+
+
     println("Image: $src")
 
     val painter = asyncPainterResource(src)
@@ -147,13 +180,17 @@ fun ProductItem(
                     ),
                     contentDescription = null,
                     tint = ColorMainGreen,
-                    modifier = Modifier.size(27.dp).clickable(
+                    modifier = Modifier
+                        .size(27.dp)
+                        .scale(animatedScale)
+                        .clickable(
                         indication = null,
                         interactionSource = remember {
                             MutableInteractionSource()
                         }
                     ) {
                         clickFavorite(product.id1c)
+                        isAnimating = true
                     }
                 )
 
@@ -163,6 +200,7 @@ fun ProductItem(
                     tint = if (stateCompare) Color.White else ColorMainGreen,
                     modifier = Modifier
                         .size(27.dp)
+                        .scale(bounceScale)
                         .clip(RoundedCornerShape(3.dp))
                         .background(
                             if (stateCompare) ColorMainGreen else Color.White
@@ -174,6 +212,7 @@ fun ProductItem(
                             }
                         ) {
                             clickCompare(product.id1c)
+                            isAnimatingBounce = true
                         }
                 )
             }
@@ -215,7 +254,7 @@ fun ProductItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "${product.price} ₸",
+                    "${formatPrice(product.price)} ₸",
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(Res.font.oswald_medium))
                 )
@@ -376,4 +415,9 @@ fun getIdFromCartMini(
     prodId: String
 ): Int {
     return cartMini.find { it.prodId == prodId }?.id ?: 0
+}
+
+
+fun formatPrice(price: Int): String {
+    return price.toString().reversed().chunked(3).joinToString(" ").reversed()
 }

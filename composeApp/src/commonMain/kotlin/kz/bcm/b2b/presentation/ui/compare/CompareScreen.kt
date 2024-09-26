@@ -85,6 +85,7 @@ import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.other.theme.ColorBlueFlower
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.Url
+import kz.bcm.b2b.presentation.ui.catalog.formatPrice
 import kz.bcm.b2b.presentation.ui.catalog.getIdFromCartMini
 import kz.bcm.b2b.presentation.viewmodel.CompareViewModel
 import org.jetbrains.compose.resources.Font
@@ -473,7 +474,7 @@ fun CompareProduct(
                 verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
                 Text(
-                    text = "${(product.price * 1.2).toInt()} ₸",
+                    text = "${formatPrice((product.price * 1.2).toInt())} ₸",
                     fontSize = 13.sp,
                     fontFamily = FontFamily(Font(Res.font.oswald_medium)),
                     color = Color.Gray,
@@ -481,7 +482,7 @@ fun CompareProduct(
                 )
 
                 Text(
-                    text = "${product.price} ₸",
+                    text = "${formatPrice(product.price)} ₸",
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(Res.font.oswald_bold))
                 )

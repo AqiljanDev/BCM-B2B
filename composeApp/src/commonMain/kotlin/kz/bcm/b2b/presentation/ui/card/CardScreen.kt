@@ -91,6 +91,7 @@ import kz.bcm.b2b.presentation.other.theme.ColorMunsell
 import kz.bcm.b2b.presentation.other.theme.ColorPlatinum
 import kz.bcm.b2b.presentation.ui.catalog.Breadcrumbs
 import kz.bcm.b2b.presentation.ui.catalog.ProductItem
+import kz.bcm.b2b.presentation.ui.catalog.formatPrice
 import kz.bcm.b2b.presentation.ui.catalog.getIdFromCartMini
 import kz.bcm.b2b.presentation.viewmodel.CardViewModel
 import org.jetbrains.compose.resources.painterResource
@@ -338,7 +339,7 @@ fun ProductActionsAndPrice(
             }
 
             Text(
-                text = "${product.price} ₸",
+                text = "${formatPrice(product.price)} ₸",
                 fontSize = 28.sp,
                 fontFamily = FontFamily(Font(Res.font.oswald_bold))
             )

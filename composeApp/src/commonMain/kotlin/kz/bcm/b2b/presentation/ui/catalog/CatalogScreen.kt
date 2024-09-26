@@ -74,14 +74,14 @@ fun CatalogScreen(navController: NavController, slug: String? = null) {
     }
 
     LaunchedEffect(stateCatalog) {
-//        viewModel.initializeData()
+        viewModel.initializeData()
 
         println("initializeData in Catalog screen = ${stateCatalog.value}")
     }
 
     LaunchedEffect(Unit, currentCategory) {
 
-//        viewModel.getPage(category = currentCategory)
+        viewModel.getPage(category = currentCategory)
     }
 
     LazyColumn(
@@ -117,7 +117,8 @@ fun CatalogScreen(navController: NavController, slug: String? = null) {
                 listChild.forEach { item ->
                     Text(
                         text = item.title,
-                        fontFamily = FontFamily(Font(Res.font.inter_regular)),
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(Res.font.inter_medium)),
                         modifier = Modifier
                             .padding(4.dp)
                             .clip(RoundedCornerShape(8.dp))

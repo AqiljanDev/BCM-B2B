@@ -25,7 +25,8 @@ fun CustomOutlinedTextField(
     value: String,
     setValue: (String) -> Unit,
     keyboardType: KeyboardType? = null,
-    icon: ImageVector? = null
+    icon: ImageVector? = null,
+    imeAction: ImeAction = ImeAction.Next
 ) {
 
     OutlinedTextField(
@@ -43,10 +44,10 @@ fun CustomOutlinedTextField(
         keyboardOptions = if (keyboardType != null) {
             KeyboardOptions(
                 keyboardType = keyboardType,
-                imeAction = ImeAction.Next
+                imeAction = imeAction
             )
         } else {
-            KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+            KeyboardOptions.Default.copy(imeAction = imeAction)
         },
         shape = RoundedCornerShape(8.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(

@@ -1,5 +1,6 @@
 package kz.bcm.b2b.presentation.ui.auth
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,13 +36,20 @@ import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.inter_bold
 import bcm_b2b.composeapp.generated.resources.inter_medium
 import kz.bcm.b2b.presentation.other.data.Route
+import kz.bcm.b2b.presentation.other.data.State
+import kz.bcm.b2b.presentation.other.theme.ColorDarkRed
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.ColorWhiteSmoke
+import kz.bcm.b2b.presentation.viewmodel.RestoreCodeViewModel
 import org.jetbrains.compose.resources.Font
+import org.koin.compose.koinInject
 
 
 @Composable
 fun RestoreCodeScreen(navController: NavController) {
+    val viewModel: RestoreCodeViewModel = koinInject()
+
+    val state = viewModel.state.collectAsState()
 
     var stateEmail by remember {
         mutableStateOf("")
@@ -69,31 +78,65 @@ fun RestoreCodeScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            CustomOutlinedTextField(
-                title = "E-Mail адрес",
-                value = stateEmail,
-                setValue = { stateEmail = it },
-                keyboardType = KeyboardType.Email,
-                icon = Icons.Filled.Email
-            )
 
-            Text(
-                text = "Получить код",
-                fontSize = 13.sp,
-                fontFamily = FontFamily(Font(Res.font.inter_medium)),
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(ColorMainGreen)
-                    .padding(vertical = 12.dp)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) {
-                        println("Send code")
+            AnimatedVisibility(state.value !is State.Success) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    CustomOutlinedTextField(
+                        title = "E-Mail адрес",
+                        value = stateEmail,
+                        setValue = { stateEmail = it },
+                        keyboardType = KeyboardType.Email,
+                        icon = Icons.Filled.Email
+                    )
+
+                    Text(
+                        text = "Получить код",
+                        fontSize = 13.sp,
+                        fontFamily = FontFamily(Font(Res.font.inter_medium)),
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                            .clip(RoundedCornerShape(7.dp))
+                            .background(ColorMainGreen)
+                            .padding(vertical = 12.dp)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) {
+                                viewModel.codeSend(stateEmail)
+                            }
+                    )
+
+                    AnimatedVisibility(state.value is State.Error) {
+                        if (state.value is State.Error) {
+                            Text(
+                                text = (state.value as State.Error).message,
+                                fontSize = 12.sp,
+                                fontFamily = FontFamily(Font(Res.font.inter_medium)),
+                                color = ColorDarkRed
+                            )
+                        }
                     }
-            )
+                }
+
+            }
+
+            AnimatedVisibility(state.value is State.Success) {
+                Text(
+                    text = "Ссылка отправлена\nна почту",
+                    fontSize = 17.sp,
+                    fontFamily = FontFamily(Font(Res.font.inter_medium)),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(vertical = 40.dp)
+                )
+            }
+
+
+
 
             Spacer(modifier = Modifier.height(10.dp))
 

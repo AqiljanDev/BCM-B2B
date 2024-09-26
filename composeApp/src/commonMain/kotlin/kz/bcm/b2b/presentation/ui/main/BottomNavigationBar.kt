@@ -62,7 +62,7 @@ fun BottomNavigationBar(
                 label = {
                     Text(
                         text = item.title,
-                        fontSize = 9.sp
+                        fontSize = 8.sp
                     )
                 },
                 selected = currentRoute == item.route,

@@ -27,19 +27,15 @@ import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,9 +62,7 @@ import kz.bcm.b2b.data.dto.collectCharacters.CharacterItemDto
 import kz.bcm.b2b.domain.data.collectCharacters.CharacterItem
 import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.other.data.SortItem
-import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.ColorMainOrange
-import kz.bcm.b2b.presentation.other.theme.ColorWhiteSmoke
 import kz.bcm.b2b.presentation.other.toggleItem
 import kz.bcm.b2b.presentation.ui.catalog.Pagination
 import kz.bcm.b2b.presentation.ui.catalog.ProductItem
@@ -85,14 +79,19 @@ fun FilterScreen(navController: NavController) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
+    // viewModel states /--
     val stateProduct = viewModel.product.collectAsState()
     val stateCharacter = viewModel.character.collectAsState()
 
     val stateCompare = viewModel.compare.collectAsState()
     val stateFavorite = viewModel.favorite.collectAsState()
     val stateCart = viewModel.cart.collectAsState()
+    // --/
 
+    // navController -> savedStateHandle
+    val savedStateH = navController.currentBackStackEntry?.savedStateHandle
 
+    // State bottom /--
     val stateBottomSheet = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     var currBottom by remember {
         mutableStateOf(StateBottomSheet.SORT)
@@ -100,29 +99,47 @@ fun FilterScreen(navController: NavController) {
     var stateCurrCharacter by remember {
         mutableStateOf<CharacterItem>(CharacterItemDto())
     }
+    // --/
 
-    var currentCategory by remember {
-        mutableStateOf("index")
+    // Current characters /--
+    val currentSlug by remember {
+        mutableStateOf(
+            savedStateH?.getStateFlow<String>("slug", "index")?.value ?: "index"
+        )
     }
     var currentPager by remember {
         mutableStateOf(1)
     }
-    var currentMin by remember {
-        mutableStateOf<Int?>(null)
+    val currentMin by remember {
+        mutableStateOf(
+            savedStateH?.getStateFlow<Int?>("min", null)?.value
+        )
     }
-    var currentMax by remember {
-        mutableStateOf<Int?>(null)
+    val currentMax by remember {
+        mutableStateOf(
+            savedStateH?.getStateFlow<Int?>("max", null)?.value
+        )
     }
     var currentSort by remember {
-        mutableStateOf(SortItem.NEW)
+        mutableStateOf(
+            SortItem.entries.find { savedStateH?.getStateFlow<String>("sort", SortItem.NEW.message)?.value == it.message } ?: SortItem.NEW
+        )
     }
     var currentF by remember {
-        mutableStateOf(emptyList<String>())
+        mutableStateOf(
+            if ((savedStateH?.getStateFlow("f", "")?.value ?: "").isEmpty()) {
+                emptyList<String>()
+            } else {
+                (savedStateH?.getStateFlow("f", "")?.value ?: "").split(".")
+            }
+        )
     }
+    // --/
 
+    // LaunchedEffects /--
     LaunchedEffect(
         Unit,
-        currentCategory,
+        currentSlug,
         currentPager,
         currentMin,
         currentMax,
@@ -130,7 +147,7 @@ fun FilterScreen(navController: NavController) {
         currentF
     ) {
         viewModel.getProduct(
-            category = currentCategory,
+            category = currentSlug,
             page = currentPager,
             min = currentMin,
             max = currentMax,
@@ -139,13 +156,13 @@ fun FilterScreen(navController: NavController) {
         )
 
         viewModel.getCharacters(
-            category = currentCategory,
+            category = currentSlug,
             min = currentMin,
             f = currentF.joinToString(separator = ".")
         )
 
         listState.scrollToItem(0)
-        println("laLaunchedEffect = current = category: $currentCategory, pager: $currentPager, min: $currentMin, max: $currentMax, sort: $currentSort, f: $currentF == ${currentF.joinToString { "." }}")
+        println("laLaunchedEffect = current = category: $currentSlug, pager: $currentPager, min: $currentMin, max: $currentMax, sort: $currentSort, f: $currentF == ${currentF.joinToString(".")}")
     }
 
     LaunchedEffect(stateCharacter) {
@@ -157,6 +174,7 @@ fun FilterScreen(navController: NavController) {
 
         println("initializeData in Catalog screen = ${stateProduct.value}")
     }
+    // --/
 
     ModalBottomSheetLayout(
         sheetState = stateBottomSheet,
@@ -216,7 +234,14 @@ fun FilterScreen(navController: NavController) {
                                 text = stateProduct.value.info.title,
                                 fontSize = 18.sp,
                                 fontFamily = FontFamily(Font(Res.font.inter_bold)),
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+
+                                    navController.navigate("${Route.CATALOG_LIST.route}/$currentSlug")
+                                }
                             )
                         }
 
@@ -255,7 +280,16 @@ fun FilterScreen(navController: NavController) {
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
+                                    println("list F: $currentF, size: ${currentF.size} ")
 
+
+                                    navController.navigate(
+                                        "${Route.FILTER_FULL.route}/${stateProduct.value.info.title}/$currentSlug/${currentSort.message}/${
+                                            if (currentF.isNotEmpty()) currentF.joinToString(
+                                                separator = "."
+                                            ) else "."
+                                        }"
+                                    )
                                 }
                         )
                     }
@@ -325,7 +359,7 @@ fun FilterScreen(navController: NavController) {
 
 
 @Composable
-fun CharactersItem(
+private fun CharactersItem(
     item: CharacterItem,
     currentChar: List<String>,
     click: () -> Unit
@@ -369,11 +403,11 @@ fun CharactersItem(
                 color = ColorMainOrange,
                 shape = RoundedCornerShape(9.dp)
             ).clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    click()
-                }
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                click()
+            }
         ) {
 
             val title =
@@ -391,7 +425,7 @@ fun CharactersItem(
 
 
 @Composable
-private fun SortBottomList(
+fun SortBottomList(
     stateSortItem: SortItem,
     click: (SortItem) -> Unit
 ) {
@@ -457,7 +491,7 @@ private fun SortBottomList(
 
 
 @Composable
-fun CharacterBottomSheet(
+private fun CharacterBottomSheet(
     item: CharacterItem,
     currentChar: List<String>,
     click: (String) -> Unit

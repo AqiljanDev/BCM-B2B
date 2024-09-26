@@ -2,6 +2,7 @@ package kz.bcm.b2b.data.repository
 
 import kz.bcm.b2b.domain.data.auth.AccessToken
 import kz.bcm.b2b.domain.data.auth.login.PostLogin
+import kz.bcm.b2b.domain.data.auth.passwordCodeSend.PasswordSend
 import kz.bcm.b2b.domain.data.auth.register.PostRegistration
 import kz.bcm.b2b.domain.data.bill.BillBody
 import kz.bcm.b2b.domain.data.bill.BillMy
@@ -9,6 +10,7 @@ import kz.bcm.b2b.domain.data.cabinet.Cabinet
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.full.GetCartFull
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
+import kz.bcm.b2b.domain.data.categories.ChildCategory
 import kz.bcm.b2b.domain.data.collectCharacters.CollectCharacters
 import kz.bcm.b2b.domain.data.compare.CompareFull
 import kz.bcm.b2b.domain.data.order.findMyOrder.MyOrder
@@ -58,6 +60,9 @@ class RepositoryImpl(
         return catalogDataSource.search(value)
     }
 
+    override suspend fun getCategories(): List<ChildCategory> {
+        return catalogDataSource.getCategories()
+    }
 
 
     override suspend fun findOneProduct(slug: String): FindOneProduct {
@@ -162,6 +167,10 @@ class RepositoryImpl(
 
     override suspend fun registration(body: PostRegistration): AccessToken {
         return authDataSource.registration(body)
+    }
+
+    override suspend fun passwordCodeSend(passwordSend: PasswordSend) {
+        return authDataSource.passwordCodeSend(passwordSend)
     }
 
 

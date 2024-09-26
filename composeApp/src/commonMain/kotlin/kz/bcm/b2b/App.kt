@@ -10,6 +10,7 @@ import kz.bcm.b2b.di.NavigationStateHolder
 import kz.bcm.b2b.presentation.other.data.Route
 import kz.bcm.b2b.presentation.other.theme.MyTheme
 import kz.bcm.b2b.presentation.ui.main.NavGraph
+import kz.bcm.b2b.presentation.ui.splash.SplashScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -19,40 +20,35 @@ fun App() {
     val navigationState by NavigationStateHolder.navigationState.collectAsState()
 
     LaunchedEffect(navigationState) {
-        println("LaunchedEffect nav state")
-
         when (navigationState) {
-
             is NavigationState.Normal -> {
-                println("NavigationState when: is normal expired")
                 navController.navigate(Route.CATALOG.route) {
                     popUpTo(Route.SPLASH.route) {
                         inclusive = true
-                        saveState = false
                     }
-                    launchSingleTop = true
+                    popUpTo(Route.LOGIN.route) {
+                        inclusive = true
+                    }
                 }
             }
-
             is NavigationState.TokenExpired -> {
-                println("NavigationState when: is token expired")
                 navController.navigate(Route.LOGIN.route) {
                     popUpTo(Route.SPLASH.route) {
                         inclusive = true
-                        saveState = false
                     }
-                    launchSingleTop = true
                 }
             }
-
             is NavigationState.Error -> {
-
-                println("NavigationState when: Error: ${(navigationState as NavigationState.Error).message}")
+                // Логика обработки ошибок, если необходима
+                println("NavigationState Error: ${(navigationState as NavigationState.Error).message}")
             }
 
             else -> {
-                println("NavigationState when: is none expired")
-                navController.navigate(Route.SPLASH.route)
+                navController.navigate(Route.SPLASH.route) {
+                    popUpTo(Route.CATALOG.route) {
+                        inclusive = true
+                    }
+                }
             }
         }
     }

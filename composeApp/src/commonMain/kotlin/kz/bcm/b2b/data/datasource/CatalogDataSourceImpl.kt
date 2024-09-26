@@ -8,12 +8,14 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.appendPathSegments
 import kotlinx.serialization.SerializationException
+import kz.bcm.b2b.data.dto.categories.ChildCategoryDto
 import kz.bcm.b2b.data.dto.collectCharacters.CollectCharactersDto
 import kz.bcm.b2b.data.dto.findOneCatalog.CatalogDto
 import kz.bcm.b2b.data.dto.findOneCatalog.ProductDto
 import kz.bcm.b2b.di.ErrorResponse
 import kz.bcm.b2b.domain.data.collectCharacters.CollectCharacters
 import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
+import kz.bcm.b2b.domain.data.findOneCatalog.ChildCategory
 import kz.bcm.b2b.domain.data.findOneCatalog.Product
 import kz.bcm.b2b.domain.repository.datasource.CatalogDataSource
 import kz.bcm.b2b.presentation.other.ApiResponse
@@ -101,6 +103,20 @@ class CatalogDataSourceImpl(
         if (body is ApiResponse.Success) return body.body
 
         return listOf()
+    }
+
+    override suspend fun getCategories(): List<kz.bcm.b2b.domain.data.categories.ChildCategory> {
+        val body =
+            httpClient.safeRequest<List<ChildCategoryDto>, ErrorResponse> {
+                method = HttpMethod.Get
+
+                url {
+                    appendPathSegments("categories")
+                }
+            }
+
+        return if (body is ApiResponse.Success) body.body
+        else emptyList()
     }
 
 

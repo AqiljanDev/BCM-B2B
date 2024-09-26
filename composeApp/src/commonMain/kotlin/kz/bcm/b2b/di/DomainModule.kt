@@ -9,6 +9,7 @@ import kz.bcm.b2b.domain.usecase.GetBillMyUseCase
 import kz.bcm.b2b.domain.usecase.GetCabinetUseCase
 import kz.bcm.b2b.domain.usecase.GetCartFullUseCase
 import kz.bcm.b2b.domain.usecase.GetCartMiniUseCase
+import kz.bcm.b2b.domain.usecase.GetCategoriesUseCase
 import kz.bcm.b2b.domain.usecase.GetCollectCharactersUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareFullUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareMiniUseCase
@@ -23,6 +24,7 @@ import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 import kz.bcm.b2b.domain.usecase.PostBillUseCase
 import kz.bcm.b2b.domain.usecase.PostLoginUseCase
 import kz.bcm.b2b.domain.usecase.PostOrdersUseCase
+import kz.bcm.b2b.domain.usecase.PostPasswordCodeSendUseCase
 import kz.bcm.b2b.domain.usecase.PostRegistrationUseCase
 import kz.bcm.b2b.domain.usecase.PutBillUseCase
 import kz.bcm.b2b.domain.usecase.PutCabinetUseCase
@@ -42,6 +44,10 @@ val domainModule = module {
 
     factory {
         GetSearchUseCase( get() )
+    }
+
+    factory {
+        GetCategoriesUseCase( get() )
     }
 
 
@@ -159,5 +165,9 @@ val domainModule = module {
 
     factory {
         PostRegistrationUseCase( get() )
+    }
+
+    factory {
+        PostPasswordCodeSendUseCase( get() )
     }
 }

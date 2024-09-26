@@ -111,10 +111,9 @@ fun DrawerContent(navController: NavController) {
                 title = "Выход",
                 clickOn = {
                     coroutineScope.launch {
-//                        removeStringSharedPref(URL.TOKEN.key)
                         putStringSharedPref(URL.TOKEN.key, "")
 
-                        NavigationStateHolder.navigationState.emit(NavigationState.None)
+                        NavigationStateHolder.navigationState.emit(NavigationState.TokenExpired)
                     }
                 },
                 tint = ColorDarkRed,
