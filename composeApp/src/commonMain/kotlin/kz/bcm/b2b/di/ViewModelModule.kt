@@ -12,11 +12,14 @@ import kz.bcm.b2b.presentation.viewmodel.CatalogListViewModel
 import kz.bcm.b2b.presentation.viewmodel.FilterFullViewModel
 import kz.bcm.b2b.presentation.viewmodel.FilterViewModel
 import kz.bcm.b2b.presentation.viewmodel.LoginViewModel
+import kz.bcm.b2b.presentation.viewmodel.PromotionFullViewModel
+import kz.bcm.b2b.presentation.viewmodel.PromotionViewModel
 import kz.bcm.b2b.presentation.viewmodel.RegistrationViewModel
 import kz.bcm.b2b.presentation.viewmodel.RestoreCodeViewModel
 import kz.bcm.b2b.presentation.viewmodel.SearchViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
+import kotlin.math.sin
 
 val viewModelModule = module {
 
@@ -26,7 +29,7 @@ val viewModelModule = module {
             get(), get(),
             get(), get(),
             get(), get(),
-            get()
+            get(), get()
         )
     }
 
@@ -35,7 +38,8 @@ val viewModelModule = module {
             get(), get(),
             get(), get(),
             get(), get(),
-            get(), get()
+            get(), get(),
+            get()
         )
     }
 
@@ -43,7 +47,7 @@ val viewModelModule = module {
         CartViewModel(
             get(), get(),
             get(), get(),
-            get()
+            get(), get()
         )
     }
 
@@ -52,7 +56,8 @@ val viewModelModule = module {
             get(),get(),
             get(),get(),
             get(),get(),
-            get(),get()
+            get(),get(),
+            get()
         )
     }
 
@@ -101,7 +106,7 @@ val viewModelModule = module {
             get(), get(),
             get(), get(),
             get(), get(),
-            get()
+            get(), get()
         )
     }
 
@@ -111,7 +116,7 @@ val viewModelModule = module {
             get(), get(),
             get(), get(),
             get(), get(),
-            get(),
+            get(), get()
         )
     }
 
@@ -127,4 +132,15 @@ val viewModelModule = module {
         )
     }
 
+    single {
+        PromotionViewModel(
+            get()
+        )
+    }
+
+    single {
+        PromotionFullViewModel(
+            get()
+        )
+    }
 }

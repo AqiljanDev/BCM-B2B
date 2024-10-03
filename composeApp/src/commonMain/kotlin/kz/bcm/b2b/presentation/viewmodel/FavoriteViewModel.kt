@@ -13,6 +13,7 @@ import kz.bcm.b2b.domain.usecase.GetCartMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteFullUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteMiniUseCase
+import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 
 class FavoriteViewModel(
     private val getFavoriteFullUseCase: GetFavoriteFullUseCase,
@@ -23,8 +24,9 @@ class FavoriteViewModel(
     private val eventFavoriteUseCase: EventFavoriteUseCase,
     eventCartUseCase: EventCartUseCase,
     deleteCartUseCase: DeleteCartUseCase,
+    getUserDiscountUseCase: GetUserDiscountUseCase
 
-    ) : ProductViewModel(
+) : ProductViewModel(
     getCompareMiniUseCase,
     getFavoriteMiniUseCase,
     getCartMiniUseCase,
@@ -32,6 +34,7 @@ class FavoriteViewModel(
     eventFavoriteUseCase,
     eventCartUseCase,
     deleteCartUseCase,
+    getUserDiscountUseCase
 ) {
 
     private val _productsFeatured = MutableStateFlow<List<WishListFull>>(listOf())

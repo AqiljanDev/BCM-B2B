@@ -86,6 +86,7 @@ fun FilterScreen(navController: NavController) {
     val stateCompare = viewModel.compare.collectAsState()
     val stateFavorite = viewModel.favorite.collectAsState()
     val stateCart = viewModel.cart.collectAsState()
+    val stateDiscount = viewModel.userDiscount.collectAsState()
     // --/
 
     // navController -> savedStateHandle
@@ -335,6 +336,7 @@ fun FilterScreen(navController: NavController) {
                         compareList = stateCompare.value,
                         favoriteList = stateFavorite.value,
                         cartList = stateCart.value.products,
+                        discount = stateDiscount.value,
                         clickFavorite = { prodId -> viewModel.eventFavorite(prodId) },
                         clickCompare = { prodId -> viewModel.eventCompare(prodId) },
                         clickCart = { item, id -> viewModel.eventCart(item, id) },

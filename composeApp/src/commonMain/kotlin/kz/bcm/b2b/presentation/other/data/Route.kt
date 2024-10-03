@@ -12,6 +12,7 @@ enum class Route(val route: String) {
     FILTER_FULL(route = "filter_full"),
     CATALOG_LIST(route = "catalog_list"),
     PROMOTION(route = "promotion"),
+    PROMOTION_FULL(route = "promotion_full"),
     DELIVERY_PAYMENT(route = "delivery_payment"),
     CONTACTS(route = "contacts"),
     SERVICE_CENTER(route = "service_center"),

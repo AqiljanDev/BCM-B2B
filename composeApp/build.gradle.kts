@@ -75,6 +75,9 @@ kotlin {
 
             // Shared preference
             implementation(libs.multiplatform.settings.no.arg)
+
+            // Date
+            implementation(libs.kotlinx.datetime)
         }
 
         desktopMain.dependencies {

@@ -49,8 +49,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun DrawerContent(navController: NavController) {
 
-    val coroutineScope = rememberCoroutineScope()
-
     Column(
         modifier = Modifier.fillMaxWidth().padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -110,11 +108,19 @@ fun DrawerContent(navController: NavController) {
                 resource = Res.drawable.ic_logout,
                 title = "Выход",
                 clickOn = {
-                    coroutineScope.launch {
-                        putStringSharedPref(URL.TOKEN.key, "")
+                    println("Drawer logout click")
+                    putStringSharedPref(URL.TOKEN.key, "")
 
-                        NavigationStateHolder.navigationState.emit(NavigationState.TokenExpired)
+                    navController.navigate(Route.LOGIN.route) {
+                        popUpTo(Route.SPLASH.route) {
+                            inclusive = true
+                        }
+
+                        popUpTo(Route.CATALOG.route) {
+                            inclusive = true
+                        }
                     }
+
                 },
                 tint = ColorDarkRed,
             )

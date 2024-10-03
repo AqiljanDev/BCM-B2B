@@ -10,6 +10,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,9 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,14 +60,21 @@ import bcm_b2b.composeapp.generated.resources.inter_light
 import bcm_b2b.composeapp.generated.resources.inter_medium
 import bcm_b2b.composeapp.generated.resources.inter_regular
 import bcm_b2b.composeapp.generated.resources.oswald_medium
+import bcm_b2b.composeapp.generated.resources.oswald_regular
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kz.bcm.b2b.data.dto.cart.event.PostCartDto
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.findOneCatalog.CharactersToProducts
 import kz.bcm.b2b.domain.data.findOneCatalog.Product
+import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
+import kz.bcm.b2b.presentation.other.discountPrice
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
+import kz.bcm.b2b.presentation.other.theme.ColorMainOrange
+import kz.bcm.b2b.presentation.other.theme.ColorPurpleElectric
+import kz.bcm.b2b.presentation.other.theme.ColorVioletElectric
+import kz.bcm.b2b.presentation.other.theme.ColorYellowMikado
 import kz.bcm.b2b.presentation.other.theme.Url
 import org.jetbrains.compose.resources.painterResource
 
@@ -73,12 +84,14 @@ fun ProductItem(
     compareList: List<GetMini>,
     favoriteList: List<GetMini>,
     cartList: List<kz.bcm.b2b.domain.data.cart.mini.Product>,
+    discount: List<UserDiscount>,
     clickFavorite: (prodId: String) -> Unit,
     clickCompare: (prodId: String) -> Unit,
     clickCart: (item: PostCart, id: Int) -> Unit,
     clickRoot: (slug: String) -> Unit
 ) {
     val src = Url.SRC_IMAGE + product.gallery.firstOrNull()?.photo
+    val disc = product.discountPrice(discount)
 
     var stateCompare by remember {
         mutableStateOf(
@@ -134,232 +147,213 @@ fun ProductItem(
     )
 
 
-    println("Image: $src")
+    println("Image: $src, Disc: $disc")
 
     val painter = asyncPainterResource(src)
 
-    Row(
-        modifier = Modifier.fillMaxWidth().height(200.dp)
-            .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp))
-            .padding(8.dp)
-            .clickable {
-                clickRoot(product.slug)
-            },
-        horizontalArrangement = Arrangement.spacedBy(15.dp)
-    ) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopStart) {
 
-        Column(
-            modifier = Modifier.fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            if (product.gallery.isNotEmpty()) {
-                KamelImage(
-                    resource = painter,
-                    contentDescription = "Photo",
-                    modifier = Modifier.size(100.dp)
-                        .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-                )
-            } else {
-                Image(
-                    painter = painterResource(Res.drawable.ic_camera_off),
-                    contentDescription = null,
-                    modifier = Modifier.size(100.dp)
-                        .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-                        .alpha(0.5f)
-                )
-            }
-            Row(
-                modifier = Modifier.padding(bottom = 9.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(
-                        if (stateFavorite) Res.drawable.ic_favorite_filled else Res.drawable.ic_favorite
-                    ),
-                    contentDescription = null,
-                    tint = ColorMainGreen,
-                    modifier = Modifier
-                        .size(27.dp)
-                        .scale(animatedScale)
-                        .clickable(
-                        indication = null,
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        }
-                    ) {
-                        clickFavorite(product.id1c)
-                        isAnimating = true
-                    }
-                )
-
-                Icon(
-                    painter = painterResource(Res.drawable.ic_compare),
-                    contentDescription = null,
-                    tint = if (stateCompare) Color.White else ColorMainGreen,
-                    modifier = Modifier
-                        .size(27.dp)
-                        .scale(bounceScale)
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(
-                            if (stateCompare) ColorMainGreen else Color.White
-                        )
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember {
-                                MutableInteractionSource()
-                            }
-                        ) {
-                            clickCompare(product.id1c)
-                            isAnimatingBounce = true
-                        }
-                )
-            }
-        }
-
-
-        Column(
-            modifier = Modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceBetween
+        Row(
+            modifier = Modifier.fillMaxWidth().height(200.dp)
+                .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+                .padding(8.dp)
+                .clickable {
+                    clickRoot(product.slug)
+                },
+            horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = product.title,
-                    fontSize = 13.sp,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                    fontFamily = FontFamily(Font(Res.font.inter_medium))
-                )
+                if (product.gallery.isNotEmpty()) {
+                    KamelImage(
+                        resource = painter,
+                        contentDescription = "Photo",
+                        modifier = Modifier.size(100.dp)
+                            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(Res.drawable.ic_camera_off),
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp)
+                            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                            .alpha(0.5f)
+                    )
+                }
+                Row(
+                    modifier = Modifier.padding(bottom = 9.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(
+                            if (stateFavorite) Res.drawable.ic_favorite_filled else Res.drawable.ic_favorite
+                        ),
+                        contentDescription = null,
+                        tint = ColorMainGreen,
+                        modifier = Modifier
+                            .size(27.dp)
+                            .scale(animatedScale)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember {
+                                    MutableInteractionSource()
+                                }
+                            ) {
+                                clickFavorite(product.id1c)
+                                isAnimating = true
+                            }
+                    )
 
-                Text(
-                    text = "Арт: ${product.article}",
-                    fontSize = 11.sp,
-                    fontFamily = FontFamily(Font(Res.font.inter_regular)),
-                    color = Color.LightGray
-                )
-
-                CharacterList(product.charactersToProducts)
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_compare),
+                        contentDescription = null,
+                        tint = if (stateCompare) Color.White else ColorMainGreen,
+                        modifier = Modifier
+                            .size(27.dp)
+                            .scale(bounceScale)
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(
+                                if (stateCompare) ColorMainGreen else Color.White
+                            )
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember {
+                                    MutableInteractionSource()
+                                }
+                            ) {
+                                clickCompare(product.id1c)
+                                isAnimatingBounce = true
+                            }
+                    )
+                }
             }
 
-            Spacer(Modifier.height(5.dp))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    "${formatPrice(product.price)} ₸",
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(Res.font.oswald_medium))
-                )
 
-                Spacer(modifier = Modifier.width(8.dp))
-                if (stateCart <= 0) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = product.title,
+                        fontSize = 13.sp,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        fontFamily = FontFamily(Font(Res.font.inter_medium))
+                    )
 
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(color = ColorMainGreen)
-                            .padding(horizontal = 12.dp, vertical = 9.dp)
-                            .clickable {
-                                stateCart = 1
+                    Text(
+                        text = "Арт: ${product.article}",
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily(Font(Res.font.inter_regular)),
+                        color = Color.LightGray
+                    )
 
-                                clickCart(
-                                    PostCartDto(product.id1c, stateCart),
-                                    getIdFromCartMini(cartList, product.id1c)
-                                )
-                            },
-                        horizontalArrangement = Arrangement.spacedBy(5.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_cart),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
+                    CharacterList(product.charactersToProducts)
+                }
 
-                        Text(
-                            "В корзину",
-                            fontSize = 15.sp,
-                            fontFamily = FontFamily(Font(Res.font.inter_regular)),
-                            color = Color.White
-                        )
-                    }
-                } else {
+                Spacer(Modifier.height(5.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Column(
-                        modifier = Modifier.widthIn(min = 100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "Наличие: ${product.count} шт",
-                            fontSize = 15.sp,
-                            fontFamily = FontFamily(Font(Res.font.inter_regular)),
-                            color = Color.Gray
+                            "${formatPrice(disc.price)} ₸",
+                            fontSize = 17.sp,
+                            fontFamily = FontFamily(Font(Res.font.oswald_medium))
                         )
+
+                        if (disc.discountValue != 0) {
+                            Text(
+                                text = "${formatPrice(product.price)} ₸",
+                                fontSize = 12.sp,
+                                fontFamily = FontFamily(Font(Res.font.oswald_regular)),
+                                textDecoration = TextDecoration.LineThrough,
+                                color = Color.Gray
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+                    if (stateCart <= 0) {
 
                         Row(
-                            modifier = Modifier.widthIn(min = 100.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(color = ColorMainGreen)
+                                .padding(horizontal = 12.dp, vertical = 9.dp)
+                                .clickable {
+                                    stateCart = 1
+
+                                    clickCart(
+                                        PostCartDto(product.id1c, stateCart),
+                                        getIdFromCartMini(cartList, product.id1c)
+                                    )
+                                },
+                            horizontalArrangement = Arrangement.spacedBy(5.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                painter = painterResource(Res.drawable.ic_minus),
-                                contentDescription = "minus",
+                                painter = painterResource(Res.drawable.ic_cart),
+                                contentDescription = null,
                                 tint = Color.White,
-                                modifier = Modifier
-                                    .size(27.dp)
-                                    .clip(RoundedCornerShape(3.dp))
-                                    .background(color = ColorMainGreen)
-                                    .padding(6.dp).clickable(
-                                        indication = null,
-                                        interactionSource = remember {
-                                            MutableInteractionSource()
-                                        }
-                                    ) {
-                                        stateCart--
-
-                                        clickCart(
-                                            PostCartDto(
-                                                prodId = product.id1c,
-                                                stateCart
-                                            ),
-                                            getIdFromCartMini(cartList, product.id1c)
-                                        )
-
-                                    }
+                                modifier = Modifier.size(24.dp)
                             )
 
                             Text(
-                                text = stateCart.toString(),
+                                "В корзину",
                                 fontSize = 15.sp,
-                                fontFamily = FontFamily(Font(Res.font.oswald_medium))
+                                fontFamily = FontFamily(Font(Res.font.inter_regular)),
+                                color = Color.White
+                            )
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier.widthIn(min = 100.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            Text(
+                                "Наличие: ${product.count} шт",
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily(Font(Res.font.inter_regular)),
+                                color = Color.Gray
                             )
 
-                            Icon(
-                                imageVector = Icons.Sharp.Add,
-                                contentDescription = "plus",
-                                tint = Color.White,
-                                modifier = Modifier
-                                    .size(27.dp)
-                                    .clip(RoundedCornerShape(3.dp))
-                                    .background(color = ColorMainGreen)
-                                    .padding(6.dp)
-                                    .clickable(
-                                        indication = null,
-                                        interactionSource = remember {
-                                            MutableInteractionSource()
-                                        }
-                                    ) {
-                                        if (stateCart < product.count) {
-                                            stateCart++
+                            Row(
+                                modifier = Modifier.widthIn(min = 100.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_minus),
+                                    contentDescription = "minus",
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .size(27.dp)
+                                        .clip(RoundedCornerShape(3.dp))
+                                        .background(color = ColorMainGreen)
+                                        .padding(6.dp).clickable(
+                                            indication = null,
+                                            interactionSource = remember {
+                                                MutableInteractionSource()
+                                            }
+                                        ) {
+                                            stateCart--
 
                                             clickCart(
                                                 PostCartDto(
@@ -368,15 +362,78 @@ fun ProductItem(
                                                 ),
                                                 getIdFromCartMini(cartList, product.id1c)
                                             )
+
                                         }
-                                    }
-                            )
+                                )
+
+                                Text(
+                                    text = stateCart.toString(),
+                                    fontSize = 15.sp,
+                                    fontFamily = FontFamily(Font(Res.font.oswald_medium))
+                                )
+
+                                Icon(
+                                    imageVector = Icons.Sharp.Add,
+                                    contentDescription = "plus",
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .size(27.dp)
+                                        .clip(RoundedCornerShape(3.dp))
+                                        .background(color = ColorMainGreen)
+                                        .padding(6.dp)
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember {
+                                                MutableInteractionSource()
+                                            }
+                                        ) {
+                                            if (stateCart < product.count) {
+                                                stateCart++
+
+                                                clickCart(
+                                                    PostCartDto(
+                                                        prodId = product.id1c,
+                                                        stateCart
+                                                    ),
+                                                    getIdFromCartMini(cartList, product.id1c)
+                                                )
+                                            }
+                                        }
+                                )
+                            }
                         }
                     }
                 }
+
+
             }
+        }
 
+        if (disc.discountType != 0) {
+            Text(
+                text = "${disc.discountValue} ${if (disc.discountType == 1) "%" else "₸"}",
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(Res.font.inter_medium)),
+                color = Color.White,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(
+                        if (disc.discountType == 1) {
+                            Brush.linearGradient(
+                                colors = listOf(ColorYellowMikado, ColorMainOrange),
+                                start = Offset(x = 0f, y = Float.POSITIVE_INFINITY),
+                                end = Offset(x = Float.POSITIVE_INFINITY, y = 0f)
+                            )
+                        } else
+                            Brush.linearGradient(
+                                colors = listOf(ColorPurpleElectric, ColorVioletElectric),
+                                start = Offset(x = 0f, y = Float.POSITIVE_INFINITY),
+                                end = Offset(x = Float.POSITIVE_INFINITY, y = 0f)
+                            )
 
+                    ).padding(4.dp)
+            )
         }
     }
 }

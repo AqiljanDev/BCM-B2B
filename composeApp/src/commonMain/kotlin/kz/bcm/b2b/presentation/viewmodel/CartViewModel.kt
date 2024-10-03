@@ -3,6 +3,7 @@ package kz.bcm.b2b.presentation.viewmodel
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -15,12 +16,14 @@ import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.full.CartFullProduct
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
 import kz.bcm.b2b.domain.data.findOneCatalog.Product
+import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.order.orders.OrderDetails
 import kz.bcm.b2b.domain.data.order.orders.PostOrders
 import kz.bcm.b2b.domain.usecase.DeleteCartUseCase
 import kz.bcm.b2b.domain.usecase.EventCartUseCase
 import kz.bcm.b2b.domain.usecase.GetBillMyUseCase
 import kz.bcm.b2b.domain.usecase.GetCartFullUseCase
+import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 import kz.bcm.b2b.domain.usecase.PostOrdersUseCase
 
 class CartViewModel(
@@ -28,7 +31,8 @@ class CartViewModel(
     private val eventCartUseCase: EventCartUseCase,
     private val deleteCartUseCase: DeleteCartUseCase,
     private val getBillMyUseCase: GetBillMyUseCase,
-    private val postOrdersUseCase: PostOrdersUseCase
+    private val postOrdersUseCase: PostOrdersUseCase,
+    private val getUserDiscountUseCase: GetUserDiscountUseCase
 ) : ViewModel() {
 
     private val _cartProduct = MutableStateFlow<List<CartFullProduct>>(listOf())
@@ -42,6 +46,10 @@ class CartViewModel(
 
     private val _orderDetails = MutableStateFlow<OrderDetails>(OrderDetailsDto())
     val orderDetails get() = _orderDetails.asStateFlow()
+
+    private val _discount = MutableStateFlow<List<UserDiscount>>(listOf())
+    val discount get() = _discount.asStateFlow()
+
 
     fun getCartFull() {
         viewModelScope.launch {
@@ -70,6 +78,7 @@ class CartViewModel(
             val res = eventCartUseCase.execute(item)
 
             _cartMini.emit(res)
+            getCartFull()
         }
     }
 
@@ -100,6 +109,15 @@ class CartViewModel(
 
             getCartFull()
             getBillMy()
+        }
+    }
+
+
+    fun getUserDiscount() {
+        viewModelScope.launch {
+            val res = getUserDiscountUseCase.execute()
+
+            _discount.emit(res)
         }
     }
 }

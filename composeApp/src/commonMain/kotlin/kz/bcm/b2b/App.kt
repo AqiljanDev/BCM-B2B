@@ -22,6 +22,9 @@ fun App() {
     LaunchedEffect(navigationState) {
         when (navigationState) {
             is NavigationState.Normal -> {
+
+                println("navigationState: Normal")
+
                 navController.navigate(Route.CATALOG.route) {
                     popUpTo(Route.SPLASH.route) {
                         inclusive = true
@@ -32,6 +35,9 @@ fun App() {
                 }
             }
             is NavigationState.TokenExpired -> {
+
+                println("navigationState: Token expired")
+
                 navController.navigate(Route.LOGIN.route) {
                     popUpTo(Route.SPLASH.route) {
                         inclusive = true
@@ -44,8 +50,13 @@ fun App() {
             }
 
             else -> {
+                println("navigationState: None")
+
                 navController.navigate(Route.SPLASH.route) {
                     popUpTo(Route.CATALOG.route) {
+                        inclusive = true
+                    }
+                    popUpTo(Route.LOGIN.route)   {
                         inclusive = true
                     }
                 }

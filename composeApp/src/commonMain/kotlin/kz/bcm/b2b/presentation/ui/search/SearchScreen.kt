@@ -34,6 +34,7 @@ fun SearchScreen(
     val stateCompare = viewModel.compare.collectAsState()
     val stateFavorite = viewModel.favorite.collectAsState()
     val stateCart = viewModel.cart.collectAsState()
+    val stateDiscount = viewModel.userDiscount.collectAsState()
 
     LaunchedEffect(fieldState.value) {
         println("field state: ${fieldState.value}")
@@ -41,7 +42,7 @@ fun SearchScreen(
     }
 
     LaunchedEffect(stateProduct) {
-//        viewModel.initializeData()
+        viewModel.initializeData()
 
         println("initializeData in Catalog screen = ${stateProduct.value}")
     }
@@ -58,6 +59,7 @@ fun SearchScreen(
                 compareList = stateCompare.value,
                 favoriteList = stateFavorite.value,
                 cartList = stateCart.value.products,
+                discount = stateDiscount.value,
                 clickFavorite = { prodId -> viewModel.eventFavorite(prodId) },
                 clickCompare = { prodId -> viewModel.eventCompare(prodId) },
                 clickCart = { item, id -> viewModel.eventCart(item, id) },

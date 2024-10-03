@@ -2,6 +2,7 @@ package kz.bcm.b2b.data.datasource
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -11,6 +12,8 @@ import io.ktor.http.appendPathSegments
 import kz.bcm.b2b.data.dto.cart.full.GetCartFullDto
 import kz.bcm.b2b.data.dto.cart.mini.GetCartMiniDto
 import kz.bcm.b2b.data.dto.compare.CompareFullDto
+import kz.bcm.b2b.data.dto.sale.GetSaleAllDto
+import kz.bcm.b2b.data.dto.sale.GetSaleOneDto
 import kz.bcm.b2b.data.dto.wishlistAndCompare.GetMiniDto
 import kz.bcm.b2b.data.dto.wishlistAndCompare.wishlist.WishListFullDto
 import kz.bcm.b2b.di.ErrorResponse
@@ -18,6 +21,8 @@ import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.full.GetCartFull
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
 import kz.bcm.b2b.domain.data.compare.CompareFull
+import kz.bcm.b2b.domain.data.sale.GetSaleAll
+import kz.bcm.b2b.domain.data.sale.GetSaleOne
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.domain.data.wishlistAndCompare.wishlist.WishListFull
 import kz.bcm.b2b.domain.repository.datasource.ProductActionsDataSource
@@ -152,6 +157,36 @@ class ProductActionsDataSourceImpl(
         }
 
         return if (entry is ApiResponse.Success) entry.body else GetCartMiniDto()
+    }
+
+
+
+
+    override suspend fun findAllSale(): List<GetSaleAll> {
+
+        val entry = httpClient.safeRequest<List<GetSaleAllDto>, ErrorResponse> {
+
+            method = HttpMethod.Get
+
+            url {
+                appendPathSegments("sale")
+            }
+        }
+
+        return if(entry is ApiResponse.Success) entry.body else listOf()
+    }
+
+    override suspend fun findOneSale(slug: String): GetSaleOne {
+
+        val entry = httpClient.safeRequest<GetSaleOneDto, ErrorResponse> {
+            method = HttpMethod.Get
+
+            url {
+                appendPathSegments("sale/$slug")
+            }
+        }
+
+        return if (entry is ApiResponse.Success) entry.body else GetSaleOneDto()
     }
 
 

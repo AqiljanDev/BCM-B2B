@@ -19,6 +19,8 @@ import kz.bcm.b2b.domain.usecase.GetFindOneOrderUseCase
 import kz.bcm.b2b.domain.usecase.GetFindOneProductsUseCase
 import kz.bcm.b2b.domain.usecase.GetFindOneUseCase
 import kz.bcm.b2b.domain.usecase.GetMyOrdersUseCase
+import kz.bcm.b2b.domain.usecase.GetSaleOneUseCase
+import kz.bcm.b2b.domain.usecase.GetSaleUseCase
 import kz.bcm.b2b.domain.usecase.GetSearchUseCase
 import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 import kz.bcm.b2b.domain.usecase.PostBillUseCase
@@ -169,5 +171,15 @@ val domainModule = module {
 
     factory {
         PostPasswordCodeSendUseCase( get() )
+    }
+
+
+
+    // Sale
+    factory {
+        GetSaleUseCase( get() )
+    }
+    factory {
+        GetSaleOneUseCase( get() )
     }
 }

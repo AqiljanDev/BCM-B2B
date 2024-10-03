@@ -42,6 +42,7 @@ import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.ColorMunsell
 import kz.bcm.b2b.presentation.viewmodel.ProfileViewModel
 import kz.bcm.b2b.sharedPref.URL
+import kz.bcm.b2b.sharedPref.putStringSharedPref
 import kz.bcm.b2b.sharedPref.removeStringSharedPref
 import org.koin.compose.koinInject
 
@@ -117,6 +118,10 @@ fun ProfileScreen(navController: NavController) {
         AnimatedVisibility(visible = stateActive == ProfileItems.ORDERS) {
             OrdersItem(
                 orders = stateOrder.value,
+                discounts = stateUserDiscount.value,
+                clickDiscount = { slug ->
+                    navController.navigate("${Route.CATALOG.route}/$slug")
+                },
                 clickEye = { id ->
                     viewModel.getFindOneOrder(id)
                     stateActive = ProfileItems.ORDER_DETAILS
@@ -143,7 +148,7 @@ fun ProfileScreen(navController: NavController) {
 
         AnimatedVisibility(visible = stateActive == ProfileItems.EXIT) {
             coroutineScope.launch {
-                removeStringSharedPref(URL.TOKEN.key)
+                putStringSharedPref(URL.TOKEN.key, "")
 
                 NavigationStateHolder.navigationState.emit(NavigationState.TokenExpired)
             }

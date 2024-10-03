@@ -58,6 +58,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
 import org.jetbrains.compose.resources.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -82,9 +83,11 @@ import kz.bcm.b2b.data.dto.findOneProduct.FindOneProductDto
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
 import kz.bcm.b2b.domain.data.findOneCatalog.Product
+import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.presentation.other.data.Route
+import kz.bcm.b2b.presentation.other.discountPrice
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.ColorMainOrange
 import kz.bcm.b2b.presentation.other.theme.ColorMunsell
@@ -106,6 +109,7 @@ fun CardScreen(navController: NavController, slug: String?) {
     val stateFavorite = viewModel.favorite.collectAsState()
     val stateCompare = viewModel.compare.collectAsState()
     val stateCart = viewModel.cart.collectAsState()
+    val stateDiscount = viewModel.userDiscount.collectAsState()
 
     LaunchedEffect(Unit) {
         println("view model product = initializeData, slug: $slug")
@@ -177,6 +181,7 @@ fun CardScreen(navController: NavController, slug: String?) {
             favoriteList = stateFavorite.value,
             compareList = stateCompare.value,
             cartList = stateCart.value.products,
+            discount = stateDiscount.value,
             clickCompare = { prodId -> viewModel.eventCompare(prodId) },
             clickFavorite = { prodId -> viewModel.eventFavorite(prodId) },
             clickCart = { item, id -> viewModel.eventCart(item, id) }
@@ -207,6 +212,7 @@ fun CardScreen(navController: NavController, slug: String?) {
                     compareList = stateCompare.value,
                     favoriteList = stateFavorite.value,
                     cartList = stateCart.value.products,
+                    discount = stateDiscount.value,
                     clickFavorite = { prodId -> viewModel.eventFavorite(prodId) },
                     clickCompare = { prodId -> viewModel.eventCompare(prodId) },
                     clickCart = { item, id -> viewModel.eventCart(item, id) },
@@ -287,10 +293,12 @@ fun ProductActionsAndPrice(
     favoriteList: List<GetMini>,
     compareList: List<GetMini>,
     cartList: List<kz.bcm.b2b.domain.data.cart.mini.Product>,
+    discount: List<UserDiscount>,
     clickFavorite: (prodId: String) -> Unit,
     clickCompare: (prodId: String) -> Unit,
     clickCart: (item: PostCart, id: Int) -> Unit
 ) {
+    val desc = (product as Product).discountPrice(discount)
 
     println("prod actions = slug: ${product.slug}, id1c: ${product.id1c} cart: $cartList, compare: $compareList, favorite: $favoriteList")
 
@@ -329,17 +337,18 @@ fun ProductActionsAndPrice(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            product.discount?.let {
+            if (desc.discountType != 0) {
                 Text(
-                    text = it.value.toString(),
+                    text = "${formatPrice(product.price)} ₸",
                     fontSize = 22.sp,
                     fontFamily = FontFamily(Font(Res.font.oswald_regular)),
-                    color = Color.DarkGray
+                    color = Color.DarkGray,
+                    textDecoration = TextDecoration.LineThrough
                 )
             }
 
             Text(
-                text = "${formatPrice(product.price)} ₸",
+                text = "${formatPrice(desc.price)} ₸",
                 fontSize = 28.sp,
                 fontFamily = FontFamily(Font(Res.font.oswald_bold))
             )

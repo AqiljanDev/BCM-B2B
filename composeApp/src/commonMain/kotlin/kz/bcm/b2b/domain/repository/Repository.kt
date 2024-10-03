@@ -22,6 +22,8 @@ import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
 import kz.bcm.b2b.domain.data.order.findOne.FindOneOrderUser
 import kz.bcm.b2b.domain.data.order.orders.OrderDetails
 import kz.bcm.b2b.domain.data.order.orders.PostOrders
+import kz.bcm.b2b.domain.data.sale.GetSaleAll
+import kz.bcm.b2b.domain.data.sale.GetSaleOne
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.domain.data.wishlistAndCompare.wishlist.WishListFull
 
@@ -90,4 +92,9 @@ interface Repository {
     suspend fun login(body: PostLogin): AccessToken
     suspend fun registration(body: PostRegistration): AccessToken
     suspend fun passwordCodeSend(passwordSend: PasswordSend)
+
+
+
+    suspend fun findAllSale(): List<GetSaleAll>
+    suspend fun findOneSale(slug: String): GetSaleOne
 }

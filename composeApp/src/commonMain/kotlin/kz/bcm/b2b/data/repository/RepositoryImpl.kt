@@ -20,6 +20,8 @@ import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
 import kz.bcm.b2b.domain.data.order.orders.OrderDetails
 import kz.bcm.b2b.domain.data.order.orders.PostOrders
+import kz.bcm.b2b.domain.data.sale.GetSaleAll
+import kz.bcm.b2b.domain.data.sale.GetSaleOne
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.domain.data.wishlistAndCompare.wishlist.WishListFull
 import kz.bcm.b2b.domain.repository.Repository
@@ -173,5 +175,14 @@ class RepositoryImpl(
         return authDataSource.passwordCodeSend(passwordSend)
     }
 
+
+
+    override suspend fun findAllSale(): List<GetSaleAll> {
+        return productActionsDataSource.findAllSale()
+    }
+
+    override suspend fun findOneSale(slug: String): GetSaleOne {
+        return productActionsDataSource.findOneSale(slug)
+    }
 
 }

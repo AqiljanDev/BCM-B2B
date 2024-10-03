@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import kz.bcm.b2b.data.dto.cart.mini.GetCartMiniDto
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.mini.GetCartMini
+import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.wishlistAndCompare.GetMini
 import kz.bcm.b2b.domain.usecase.DeleteCartUseCase
 import kz.bcm.b2b.domain.usecase.EventCartUseCase
@@ -16,6 +17,7 @@ import kz.bcm.b2b.domain.usecase.EventFavoriteUseCase
 import kz.bcm.b2b.domain.usecase.GetCartMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteMiniUseCase
+import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 
 open class ProductViewModel(
     private val getCompareMiniUseCase: GetCompareMiniUseCase,
@@ -24,7 +26,8 @@ open class ProductViewModel(
     private val eventCompareUseCase: EventCompareUseCase,
     private val eventFavoriteUseCase: EventFavoriteUseCase,
     private val eventCartUseCase: EventCartUseCase,
-    private val deleteCartUseCase: DeleteCartUseCase
+    private val deleteCartUseCase: DeleteCartUseCase,
+    private val getUserDiscountUseCase: GetUserDiscountUseCase,
 ) : ViewModel() {
 
     private val _compare = MutableStateFlow<List<GetMini>>(listOf())
@@ -36,11 +39,15 @@ open class ProductViewModel(
     private val _cart = MutableStateFlow<GetCartMini>(GetCartMiniDto())
     val cart get() = _cart.asStateFlow()
 
+    private val _userDiscount = MutableStateFlow<List<UserDiscount>>(listOf())
+    val userDiscount = _userDiscount.asStateFlow()
+
 
     fun initializeData() {
         getMiniCompare()
         getMiniFavorite()
         getMiniCart()
+        getUserDiscount()
 
         println("Favorite screen = initializeData")
     }
@@ -100,6 +107,14 @@ open class ProductViewModel(
                     deleteCartUseCase.execute(id)
             )
 
+        }
+    }
+
+    fun getUserDiscount() {
+        viewModelScope.launch {
+            val res = getUserDiscountUseCase.execute()
+
+            _userDiscount.emit(res)
         }
     }
 }

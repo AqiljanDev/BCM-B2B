@@ -397,20 +397,14 @@ fun CustomBasicFieldPrice(
 ) {
     var newItem by remember { mutableStateOf(item) }
 
-    Box(
-        modifier = Modifier
-            .widthIn(max = 500.dp)
-            .border(
-                width = 1.dp,
-                color = Color.Gray,
-                shape = RoundedCornerShape(4.dp)
-            )
-            .padding(horizontal = 6.dp), contentAlignment = Alignment.CenterStart
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         Text(
             text = first,
-            fontSize = 15.sp,
+            fontSize = 17.sp,
             color = Color.Gray
         )
 
@@ -422,13 +416,18 @@ fun CustomBasicFieldPrice(
             },
             singleLine = true,
             modifier = Modifier
-                .padding(horizontal = 18.dp, vertical = 10.dp),
+                .border(
+                    width = 1.dp,
+                    color = Color.Gray,
+                    shape = RoundedCornerShape(4.dp)
+                ).padding(horizontal = 18.dp, vertical = 8.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
             )
         )
     }
+
 }
 
 

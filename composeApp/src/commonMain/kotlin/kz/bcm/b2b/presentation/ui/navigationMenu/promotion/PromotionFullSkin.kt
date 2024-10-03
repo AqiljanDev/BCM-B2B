@@ -31,7 +31,10 @@ import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
-fun PromotionSkin(navController: NavController) {
+fun PromotionFullSkin(
+    navController: NavController,
+    slug: String?
+) {
     val stateScaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
 
@@ -93,7 +96,8 @@ fun PromotionSkin(navController: NavController) {
                     bottom = paddingValues.calculateBottomPadding()
                 )
         ) {
-            PromotionScreen(navController)
+            PromotionFullScreen(slug)
         }
     }
+
 }

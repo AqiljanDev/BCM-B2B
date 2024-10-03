@@ -52,6 +52,7 @@ import kz.bcm.b2b.domain.data.order.findOne.FindOneOrderProduct
 import kz.bcm.b2b.domain.data.order.findOne.FindOneProduct
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.ColorPlatinum
+import kz.bcm.b2b.presentation.ui.catalog.formatPrice
 import kz.bcm.b2b.presentation.ui.catalog.getIdFromCartMini
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
@@ -122,7 +123,7 @@ fun OrdersItemDetails(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Сумма: ${order.products.sumOf { it.count * it.price }} ₸",
+                    text = "Сумма: ${formatPrice(order.products.sumOf { it.count * it.price })} ₸",
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(Res.font.oswald_bold))
                 )
@@ -257,7 +258,7 @@ fun OrderDetailsProduct(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${product.price} ₸ - ${product.count}шт",
+                text = "${formatPrice(product.price)} ₸ - ${product.count}шт",
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(Res.font.oswald_medium))
             )

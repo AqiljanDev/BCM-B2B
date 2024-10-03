@@ -36,6 +36,7 @@ import bcm_b2b.composeapp.generated.resources.inter_medium
 import bcm_b2b.composeapp.generated.resources.inter_regular
 import kz.bcm.b2b.domain.data.findOneCatalog.ParentCategory
 import kz.bcm.b2b.presentation.other.data.Route
+import kz.bcm.b2b.presentation.other.discountPrice
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.ColorPlatinum
 import kz.bcm.b2b.presentation.viewmodel.CatalogViewModel
@@ -54,6 +55,7 @@ fun CatalogScreen(navController: NavController, slug: String? = null) {
 
     val stateCatalog = viewModel.catalog.collectAsState()
     val statePage = viewModel.page.collectAsState()
+    val stateUserDiscount = viewModel.userDiscount.collectAsState()
 
     val stateCompare = viewModel.compare.collectAsState()
     val stateFavorite = viewModel.favorite.collectAsState()
@@ -73,8 +75,9 @@ fun CatalogScreen(navController: NavController, slug: String? = null) {
         println("getFindOne in Catalog screen")
     }
 
-    LaunchedEffect(stateCatalog) {
+    LaunchedEffect(Unit,stateCatalog) {
         viewModel.initializeData()
+        viewModel.getUserDiscount()
 
         println("initializeData in Catalog screen = ${stateCatalog.value}")
     }
@@ -157,11 +160,13 @@ fun CatalogScreen(navController: NavController, slug: String? = null) {
         }
 
         items(stateCatalog.value.products) { product ->
+
             ProductItem(
                 product = product,
                 compareList = stateCompare.value,
                 favoriteList = stateFavorite.value,
                 cartList = stateCart.value.products,
+                discount = stateUserDiscount.value,
                 clickFavorite = { prodId -> viewModel.eventFavorite(prodId) },
                 clickCompare = { prodId -> viewModel.eventCompare(prodId) },
                 clickCart = { item, id -> viewModel.eventCart(item, id) },

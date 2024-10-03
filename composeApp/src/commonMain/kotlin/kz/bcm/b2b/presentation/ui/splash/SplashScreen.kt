@@ -13,6 +13,8 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import bcm_b2b.composeapp.generated.resources.Res
 import bcm_b2b.composeapp.generated.resources.bcm_storis
 import bcm_b2b.composeapp.generated.resources.ic_logo
@@ -23,6 +25,7 @@ import org.koin.compose.koinInject
 @Composable
 fun SplashScreen() {
     val viewModel: SplashViewModel = koinInject()
+
 
     LaunchedEffect(Unit) {
         viewModel.checkToken()

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kz.bcm.b2b.data.dto.findOneCatalog.CatalogDto
 import kz.bcm.b2b.domain.data.findOneCatalog.Catalog
+import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.usecase.DeleteCartUseCase
 import kz.bcm.b2b.domain.usecase.EventCartUseCase
 import kz.bcm.b2b.domain.usecase.EventCompareUseCase
@@ -16,10 +17,12 @@ import kz.bcm.b2b.domain.usecase.GetCollectCharactersUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFindOneUseCase
+import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 
 class CatalogViewModel(
     private val getFindOneUseCase: GetFindOneUseCase,
     private val getCollectCharactersUseCase: GetCollectCharactersUseCase,
+    private val getUserDiscountUseCase: GetUserDiscountUseCase,
     getCompareMiniUseCase: GetCompareMiniUseCase,
     getFavoriteMiniUseCase: GetFavoriteMiniUseCase,
     getCartMiniUseCase: GetCartMiniUseCase,
@@ -34,7 +37,8 @@ class CatalogViewModel(
     eventCompareUseCase,
     eventFavoriteUseCase,
     eventCartUseCase,
-    deleteCartUseCase
+    deleteCartUseCase,
+    getUserDiscountUseCase
 ) {
 
     private val _catalog = MutableStateFlow<Catalog>(CatalogDto())
@@ -77,6 +81,5 @@ class CatalogViewModel(
             }
         }
     }
-
 
 }

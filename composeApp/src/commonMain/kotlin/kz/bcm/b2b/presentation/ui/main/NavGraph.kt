@@ -19,6 +19,8 @@ import kz.bcm.b2b.presentation.ui.filterFull.FilterFullSkin
 import kz.bcm.b2b.presentation.ui.navigationMenu.catalogList.CatalogListSkin
 import kz.bcm.b2b.presentation.ui.navigationMenu.contact.ContactSkin
 import kz.bcm.b2b.presentation.ui.navigationMenu.delivery.DeliveryPaymentSkin
+import kz.bcm.b2b.presentation.ui.navigationMenu.promotion.PromotionFullScreen
+import kz.bcm.b2b.presentation.ui.navigationMenu.promotion.PromotionFullSkin
 import kz.bcm.b2b.presentation.ui.navigationMenu.promotion.PromotionSkin
 import kz.bcm.b2b.presentation.ui.navigationMenu.service.ServiceCenterSkin
 import kz.bcm.b2b.presentation.ui.profile.ProfileSkin
@@ -80,6 +82,11 @@ fun NavGraph(
 
             composable(Route.PROMOTION.route) {
                 PromotionSkin(navController)
+            }
+            composable("${Route.PROMOTION_FULL.route}/{slug}") { backStackEntry ->
+                val slug = backStackEntry.arguments?.getString("slug")
+
+                PromotionFullSkin(navController, slug)
             }
 
             composable(Route.DELIVERY_PAYMENT.route) {

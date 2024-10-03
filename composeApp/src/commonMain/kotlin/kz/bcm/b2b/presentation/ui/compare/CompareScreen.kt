@@ -1,4 +1,4 @@
-package kz.bcm.b2b.presentation.ui.compare
+ package kz.bcm.b2b.presentation.ui.compare
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
@@ -77,11 +77,17 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.launch
 import kz.bcm.b2b.data.dto.cart.event.PostCartDto
+import kz.bcm.b2b.data.dto.findOneCatalog.CategoriesDto
+import kz.bcm.b2b.data.dto.findOneCatalog.DiscountDto
+import kz.bcm.b2b.data.dto.findOneCatalog.ParentCategoryDto
+import kz.bcm.b2b.data.dto.findOneCatalog.ProductDto
 import kz.bcm.b2b.domain.data.cart.event.PostCart
 import kz.bcm.b2b.domain.data.cart.mini.Product
 import kz.bcm.b2b.domain.data.compare.CharactersToCompare
 import kz.bcm.b2b.domain.data.compare.ProductNested
+import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.presentation.other.data.Route
+import kz.bcm.b2b.presentation.other.discountPrice
 import kz.bcm.b2b.presentation.other.theme.ColorBlueFlower
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.other.theme.Url
@@ -117,6 +123,7 @@ fun CompareScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         viewModel.getProduct()
         viewModel.getCart()
+        viewModel.getDiscount()
     }
 
 
@@ -358,6 +365,7 @@ fun CompareScreen(navController: NavController) {
                     CompareProduct(
                         product = prod.product,
                         cartList = stateCart.value.products,
+                        discount = stateUserDiscount.value,
                         deleteProduct = { prodId -> viewModel.deleteCompare(prodId) },
                         updateCart = { item -> viewModel.updateCart(item) },
                         deleteCart = { prodId -> viewModel.deleteCart(prodId) },
@@ -416,12 +424,28 @@ fun CompareScreen(navController: NavController) {
 fun CompareProduct(
     product: ProductNested,
     cartList: List<Product>,
+    discount: List<UserDiscount>,
     deleteProduct: (prodId: String) -> Unit,
     updateCart: (item: PostCart) -> Unit,
     deleteCart: (prodId: Int) -> Unit,
     modifier: Modifier = Modifier,
     clickRoot: (slug: String) -> Unit
 ) {
+
+    val productFindOne = ProductDto(
+        slug = product.slug,
+        title = product.title,
+        count = product.count,
+        price = product.price,
+        discount = product.discount as DiscountDto?,
+        categories = CategoriesDto(
+            discount = product.categories.discount as DiscountDto?,
+            parentCategory = product.categories.parentCategory as ParentCategoryDto?
+        ),
+        categoriesId = product.categoriesId
+    )
+
+    val desc = productFindOne.discountPrice(discount)
 
     Box(
         modifier = modifier,
@@ -473,16 +497,19 @@ fun CompareProduct(
             Column(
                 verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                Text(
-                    text = "${formatPrice((product.price * 1.2).toInt())} ₸",
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily(Font(Res.font.oswald_medium)),
-                    color = Color.Gray,
-                    textDecoration = TextDecoration.LineThrough
-                )
+
+                if(desc.discountType != 0) {
+                    Text(
+                        text = "${formatPrice(product.price)} ₸",
+                        fontSize = 13.sp,
+                        fontFamily = FontFamily(Font(Res.font.oswald_medium)),
+                        color = Color.Gray,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                }
 
                 Text(
-                    text = "${formatPrice(product.price)} ₸",
+                    text = "${formatPrice(desc.price)} ₸",
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(Res.font.oswald_bold))
                 )

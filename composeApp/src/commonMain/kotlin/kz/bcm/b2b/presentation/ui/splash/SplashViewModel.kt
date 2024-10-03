@@ -15,6 +15,10 @@ class SplashViewModel(
     private val httpClient: HttpClient
 ) : ViewModel() {
 
+    init {
+        checkToken()
+    }
+
     fun checkToken() {
         viewModelScope.launch {
             try {

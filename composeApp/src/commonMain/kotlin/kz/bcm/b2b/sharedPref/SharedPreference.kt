@@ -8,11 +8,12 @@ import com.russhwolf.settings.set
 private val setting = Settings()
 
 fun getStringSharedPref(key: String): String? {
-
+    println("Shared Preference -> getString = key: $key")
     return setting[key]
 }
 
 fun putStringSharedPref(key: String, value: String) {
+    println("Shared Preference -> putString = key: $key, value: $value")
     setting.putString(key, value)
 }
 

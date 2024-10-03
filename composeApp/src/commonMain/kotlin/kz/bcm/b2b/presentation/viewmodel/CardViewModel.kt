@@ -15,9 +15,11 @@ import kz.bcm.b2b.domain.usecase.GetCartMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFindOneProductsUseCase
+import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 
 class CardViewModel(
     private val getFindOneProductsUseCase: GetFindOneProductsUseCase,
+    getUserDiscountUseCase: GetUserDiscountUseCase,
     getCompareMiniUseCase: GetCompareMiniUseCase,
     getFavoriteMiniUseCase: GetFavoriteMiniUseCase,
     getCartMiniUseCase: GetCartMiniUseCase,
@@ -32,7 +34,8 @@ class CardViewModel(
     eventCompareUseCase,
     eventFavoriteUseCase,
     eventCartUseCase,
-    deleteCartUseCase
+    deleteCartUseCase,
+    getUserDiscountUseCase
 ) {
     private val _product = MutableStateFlow<FindOneProduct>(FindOneProductDto())
     val product get() = _product.asStateFlow()

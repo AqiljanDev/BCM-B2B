@@ -19,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Text
@@ -56,9 +55,11 @@ import kotlinx.serialization.json.Json
 import kz.bcm.b2b.data.dto.order.orders.PostOrdersDto
 import kz.bcm.b2b.domain.data.bill.BillMy
 import kz.bcm.b2b.domain.data.cart.full.CartFullProduct
+import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
 import kz.bcm.b2b.domain.data.order.orders.PostOrders
 import kz.bcm.b2b.presentation.other.data.ProductBasketCreate
 import kz.bcm.b2b.presentation.other.data.Route
+import kz.bcm.b2b.presentation.other.discountPrice
 import kz.bcm.b2b.presentation.other.theme.ColorGreyDavy
 import kz.bcm.b2b.presentation.other.theme.ColorMainGreen
 import kz.bcm.b2b.presentation.ui.catalog.formatPrice
@@ -76,6 +77,7 @@ fun CartScreen(navController: NavController) {
     val stateCartMini = viewModel.cartMini.collectAsState()
     val stateBillMy = viewModel.billMy.collectAsState()
     val stateOrderDetails = viewModel.orderDetails.collectAsState()
+    val stateDiscount = viewModel.discount.collectAsState()
 
     var stateTitle by remember {
         mutableStateOf("Ваша корзина пуста")
@@ -84,10 +86,12 @@ fun CartScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         viewModel.getCartFull()
         viewModel.getBillMy()
+        viewModel.getUserDiscount()
     }
 
     LaunchedEffect(stateOrderDetails.value) {
-        if (stateOrderDetails.value.id != 0) stateTitle = "Заказ #${stateOrderDetails.value.id} успешно оформлен!"
+        if (stateOrderDetails.value.id != 0) stateTitle =
+            "Заказ #${stateOrderDetails.value.id} успешно оформлен!"
     }
 
     Box(
@@ -138,6 +142,7 @@ fun CartScreen(navController: NavController) {
                         ProductItemInCart(
                             product = prod.product,
                             cartList = stateCartMini.value.products,
+                            discount = stateDiscount.value,
                             clickEvent = { item -> viewModel.eventCart(item) },
                             clickDelete = { id -> viewModel.deleteCart(id) },
                             clickRoot = { slug -> navController.navigate("${Route.CARD.route}/$slug") }
@@ -146,11 +151,17 @@ fun CartScreen(navController: NavController) {
                 }
 
                 Spacer(modifier = Modifier.height(13.dp))
+                println("cartscreen = ${stateProduct.value}")
 
                 FormFieldsCard(
                     product = stateProduct.value,
-                    totalPrice = stateProduct.value.sumOf { it.count * it.product.price },
-                    stateBillMy.value
+                    totalPrice = stateProduct.value.sumOf {
+                        it.count * it.product.discountPrice(
+                            stateDiscount.value
+                        ).price
+                    },
+                    bill = stateBillMy.value,
+                    discountList = stateDiscount.value
                 ) { order ->
                     viewModel.postOrders(postOrder = order)
                 }
@@ -172,6 +183,7 @@ private fun FormFieldsCard(
     product: List<CartFullProduct>,
     totalPrice: Int,
     bill: List<BillMy>,
+    discountList: List<UserDiscount>,
     clickDesign: (order: PostOrders) -> Unit
 ) {
     val items = listOf("Самовывоз", "Доставка")
@@ -253,13 +265,20 @@ private fun FormFieldsCard(
                                         ?: return@clickable
 
                                 val productBasketList = product.map { prod ->
+                                    val disc = prod.product.discountPrice(discountList)
+
                                     ProductBasketCreate(
                                         id = prod.id,
                                         c = prod.count,
                                         p = prod.product.price,
-                                        d = "10%"
+                                        d = when (disc.discountType) {
+                                            1 -> "${disc.price} %"
+                                            2 -> "${disc.price} ₸"
+                                            else -> "Нет"
+                                        }
                                     )
                                 }
+
 
                                 val productJson = Json.encodeToString(productBasketList)
 
@@ -270,7 +289,7 @@ private fun FormFieldsCard(
                                     commentUser = stateComment.value.ifEmpty { " " },
                                     userBillId = billsId,
                                     deliverId = deliveryId,
-                                    discount = "20%",
+                                    discount = "",
                                     products = productJson
                                 )
 

@@ -75,4 +75,12 @@ class CompareViewModel(
             getProduct()
         }
     }
+
+    fun getDiscount() {
+        viewModelScope.launch {
+            val res = getUserDiscountUseCase.execute()
+
+            _userDiscount.emit(res)
+        }
+    }
 }

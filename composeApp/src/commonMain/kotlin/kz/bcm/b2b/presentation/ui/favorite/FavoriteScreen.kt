@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
@@ -34,6 +35,7 @@ fun FavoriteScreen(navController: NavController) {
     val stateFavorite = viewModel.favorite.collectAsState()
     val stateCompare = viewModel.compare.collectAsState()
     val stateCart = viewModel.cart.collectAsState()
+    val stateDiscount = viewModel.userDiscount.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getProducts()
@@ -50,7 +52,7 @@ fun FavoriteScreen(navController: NavController) {
 
 
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp),
         contentPadding = PaddingValues(vertical = 10.dp)
@@ -70,6 +72,7 @@ fun FavoriteScreen(navController: NavController) {
                 compareList = stateCompare.value,
                 favoriteList = stateFavorite.value,
                 cartList = stateCart.value.products,
+                discount = stateDiscount.value,
                 clickFavorite = { prodId ->
                     println("Favorite screen = click favorite")
                     viewModel.eventFavorite(prodId)

@@ -33,4 +33,10 @@ class LoginViewModel(
             }
         }
     }
+
+    fun resetState() {
+        viewModelScope.launch {
+            _state.emit(State.Loading)
+        }
+    }
 }

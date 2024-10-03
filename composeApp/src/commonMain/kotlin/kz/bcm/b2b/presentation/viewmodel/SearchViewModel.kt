@@ -14,6 +14,7 @@ import kz.bcm.b2b.domain.usecase.GetCollectCharactersUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetSearchUseCase
+import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 
 class SearchViewModel(
     private val getSearchUseCase: GetSearchUseCase,
@@ -24,7 +25,8 @@ class SearchViewModel(
     eventCompareUseCase: EventCompareUseCase,
     eventFavoriteUseCase: EventFavoriteUseCase,
     eventCartUseCase: EventCartUseCase,
-    deleteCartUseCase: DeleteCartUseCase
+    deleteCartUseCase: DeleteCartUseCase,
+    getUserDiscountUseCase: GetUserDiscountUseCase
 ) : ProductViewModel(
     getCompareMiniUseCase,
     getFavoriteMiniUseCase,
@@ -32,7 +34,8 @@ class SearchViewModel(
     eventCompareUseCase,
     eventFavoriteUseCase,
     eventCartUseCase,
-    deleteCartUseCase
+    deleteCartUseCase,
+    getUserDiscountUseCase
 ) {
     private val _product = MutableStateFlow<List<Product>>(listOf())
     val product get() = _product.asStateFlow()

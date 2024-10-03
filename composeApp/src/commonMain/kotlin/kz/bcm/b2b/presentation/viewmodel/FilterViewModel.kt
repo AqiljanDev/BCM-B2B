@@ -19,6 +19,7 @@ import kz.bcm.b2b.domain.usecase.GetCollectCharactersUseCase
 import kz.bcm.b2b.domain.usecase.GetCompareMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFavoriteMiniUseCase
 import kz.bcm.b2b.domain.usecase.GetFindOneUseCase
+import kz.bcm.b2b.domain.usecase.GetUserDiscountUseCase
 
 class FilterViewModel(
     private val getFindOneUseCase: GetFindOneUseCase,
@@ -29,7 +30,8 @@ class FilterViewModel(
     eventCompareUseCase: EventCompareUseCase,
     eventFavoriteUseCase: EventFavoriteUseCase,
     eventCartUseCase: EventCartUseCase,
-    deleteCartUseCase: DeleteCartUseCase
+    deleteCartUseCase: DeleteCartUseCase,
+    getUserDiscountUseCase: GetUserDiscountUseCase
 
 ): ProductViewModel(
     getCompareMiniUseCase,
@@ -38,7 +40,8 @@ class FilterViewModel(
     eventCompareUseCase,
     eventFavoriteUseCase,
     eventCartUseCase,
-    deleteCartUseCase
+    deleteCartUseCase,
+    getUserDiscountUseCase
 ) {
 
     private val _product = MutableStateFlow<Catalog>(CatalogDto())

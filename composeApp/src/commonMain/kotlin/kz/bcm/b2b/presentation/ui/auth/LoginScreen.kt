@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,7 +61,6 @@ import org.koin.compose.koinInject
 @Composable
 fun LoginScreen(navController: NavController) {
     val viewModel: LoginViewModel = koinInject()
-    val coroutine = rememberCoroutineScope()
 
     val state = viewModel.state.collectAsState()
 
@@ -73,7 +73,13 @@ fun LoginScreen(navController: NavController) {
     }
 
 
+    LaunchedEffect(Unit) {
+        println("LoginScreen open: state: ${state.value}")
+    }
+
+
     when (state.value) {
+
         is State.Loading -> {
             stateError = null
         }
@@ -83,12 +89,16 @@ fun LoginScreen(navController: NavController) {
                 key = URL.TOKEN.key,
                 value = (state.value as State.Success<String>).data
             )
+            println("LoginScreen state success")
 
             stateError = null
-
-            coroutine.launch {
-                NavigationStateHolder.navigationState.emit(NavigationState.Normal)
+            navController.navigate(Route.CATALOG.route) {
+                popUpTo(Route.LOGIN.route) {
+                    inclusive = true
+                }
             }
+
+            viewModel.resetState()
         }
 
         is State.Error -> {
