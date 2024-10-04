@@ -9,14 +9,11 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.SerializationException
-import kz.bcm.b2b.data.dto.findOneCatalog.ParentCategoryDto
-import kz.bcm.b2b.data.dto.findOneCatalog.ProductDto
 import kz.bcm.b2b.domain.data.findOneCatalog.ParentCategory
 import kz.bcm.b2b.domain.data.findOneCatalog.PriceDiscount
 import kz.bcm.b2b.domain.data.findOneCatalog.Product
 import kz.bcm.b2b.domain.data.findOneCatalog.UserCategory
 import kz.bcm.b2b.domain.data.findOneCatalog.UserDiscount
-import kz.bcm.b2b.domain.data.findOneProduct.FindOneProduct
 
 
 fun <T> List<T>.toggleItem(item: T): List<T> {
@@ -37,10 +34,10 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
 ): ApiResponse<T, E> =
     try {
         val response = request { block() }
-        val sss = response.body<T>()
+        val body = response.body<T>()
 
-        println("safeRequest = success: $sss")
-        ApiResponse.Success(sss)
+        println("safeRequest = success: $body")
+        ApiResponse.Success(body)
     } catch (e: ClientRequestException) {
 
         println("safeRequest = ClientRequestException: ${e.message}")

@@ -36,11 +36,11 @@ fun BottomNavigationBar(
     navController: NavController
 ) {
     val items = listOf(
-        BottomItem("Каталог", Res.drawable.ic_catalog, Route.CATALOG.name),
-        BottomItem("Сравнение", Res.drawable.ic_compare, Route.COMPARE.name),
-        BottomItem("Избранное", Res.drawable.ic_favorite, Route.FAVORITE.name),
-        BottomItem("Корзина", Res.drawable.ic_cart, Route.CART.name),
-        BottomItem("Профиль", Res.drawable.ic_profile, Route.PROFILE.name)
+        BottomItem("Каталог", Res.drawable.ic_catalog, Route.CATALOG.route),
+        BottomItem("Сравнение", Res.drawable.ic_compare, Route.COMPARE.route),
+        BottomItem("Избранное", Res.drawable.ic_favorite, Route.FAVORITE.route),
+        BottomItem("Корзина", Res.drawable.ic_cart, Route.CART.route),
+        BottomItem("Профиль", Res.drawable.ic_profile, Route.PROFILE.route)
     )
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -49,12 +49,13 @@ fun BottomNavigationBar(
     BottomNavigation {
 
         items.forEachIndexed { index, item ->
+
             BottomNavigationItem(
                 icon = {
                     Icon(
                         painter = painterResource(item.img),
                         contentDescription = "Icon",
-                        modifier = Modifier.size(25.dp),
+                        modifier = Modifier.size(25.dp)
                     )
                 },
                 unselectedContentColor = Color.LightGray,
@@ -67,7 +68,10 @@ fun BottomNavigationBar(
                 },
                 selected = currentRoute == item.route,
                 interactionSource = remember { MutableInteractionSource() },
-                onClick = { navController.navigate(item.route) }
+                onClick = {
+                    navController.navigate(item.route)
+                    println("bottom navigation = current route: ${currentRoute}, item.route: ${item.route}")
+                }
             )
         }
     }

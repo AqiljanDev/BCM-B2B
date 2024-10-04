@@ -77,7 +77,7 @@ fun CartSkin(navController: NavController) {
                         Icon(
                             painter = painterResource(Res.drawable.ic_search),
                             contentDescription = null,
-                            modifier = Modifier.size(25.dp)
+                            modifier = Modifier.size(28.dp)
                         )
                     }
                 }

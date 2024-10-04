@@ -105,7 +105,7 @@ val dataModule = module {
     }
 
     single<AuthDataSource> {
-        AuthDataSourceImpl( get() )
+        AuthDataSourceImpl(get())
     }
 }
 
